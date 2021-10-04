@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  environment:
+    environment:
+      DB_HOST: mysql
+    build: .
+    container_name: picpay-transactions-api
+    volumes:
+      - ../:/var/www/html/
+    ports:
+      - "8000:8000"
+    command: php -S 0.0.0.0:8000 -t public/
+    depends_on:
+      - mysql
+    links:
+      - mysql
+  mysql:
+    image: mysql:5.7
+    container_name: picpay-transactions-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    environment:
+      MYSQL_DATABASE: 'picpay_transactions'
+      MYSQL_ROOT_PASSWORD: 'password'
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+
