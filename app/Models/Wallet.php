@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\Wallet;
 
-class User extends Model
+class Wallet extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -14,11 +12,8 @@ class User extends Model
      * @var array
      */
     protected $fillable = [
-        'full_name',
-        'document',
-        'email',
-        'password',
-        'type',
+        'user_id',
+        'balance',
     ];
 
     /**
@@ -27,34 +22,22 @@ class User extends Model
      * @var array
      */
     protected $hidden = [
-        'id',
-        'password',
+        'user_id',
         'created_at',
         'updated_at',
         'deleted_at',
     ];
 
-     /**
+    /**
      * The attributes that should be cast.
      *
      * @var array
      */
     protected $casts = [
-        'full_name'  => 'string',
-        'document'   => 'string',
-        'email'      => 'string',
-        'password'   => 'string',
-        'type'       => 'string',
+        'user_id'    => 'integer',
+        'balance'    => 'decimal:2',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
-
-    /**
-     * @return HasOne
-     */
-    public function wallet(): HasOne
-    {
-        return $this->hasOne(Wallet::class);
-    }
 }
