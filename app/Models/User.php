@@ -19,7 +19,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email',
+        'full_name',
+        'document',
+        'email',
+        'password',
+        'type',
     ];
 
     /**
@@ -28,6 +32,26 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
+        'id',
         'password',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'full_name'  => 'string',
+        'document'   => 'string',
+        'email'      => 'string',
+        'password'   => 'string',
+        'type'       => 'string',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 }
