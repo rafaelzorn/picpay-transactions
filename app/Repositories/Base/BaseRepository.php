@@ -39,4 +39,15 @@ abstract class BaseRepository implements BaseRepositoryInterface
     {
         return $this->model->create($attributes);
     }
+
+    /**
+     * @param string $attribute
+     * @param mixed $value
+     *
+     * @return Model
+     */
+    public function findByAttribute(string $attribute, mixed $value): ?Model
+    {
+        return $this->model->where($attribute, $value)->first();
+    }
 }
