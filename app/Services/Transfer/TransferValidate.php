@@ -7,6 +7,7 @@ use App\Exceptions\TransferException;
 use App\Constants\HttpStatusConstant;
 use App\Constants\UserTypeConstant;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
+use App\Services\ExternalAuthorizer\Contracts\ExternalAuthorizerServiceInterface;
 
 class TransferValidate
 {
@@ -16,13 +17,23 @@ class TransferValidate
     private $userRepository;
 
     /**
+     * @var $externalAuthorizerService
+     */
+    private $externalAuthorizerService;
+
+    /**
      * @param UserRepositoryInterface $userRepository
+     * @param ExternalAuthorizerServiceInterface $externalAuthorizerService
      *
      * @return void
      */
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        ExternalAuthorizerServiceInterface $externalAuthorizerService
+    )
     {
-        $this->userRepository = $userRepository;
+        $this->userRepository            = $userRepository;
+        $this->externalAuthorizerService = $externalAuthorizerService;
     }
 
     /**
@@ -36,6 +47,7 @@ class TransferValidate
         $this->payerExists($data['payer_document']);
         $this->payerHasEnoughBalance($data['payer_document'], $data['value']);
         $this->payeeExists($data['payee_document']);
+        $this->checkExternalAuthorizer();
     }
 
     /**
@@ -98,6 +110,23 @@ class TransferValidate
 
         if ($payeeDoesNotExists) {
             throw new TransferException(trans('messages.payee_not_found'), HttpStatusConstant::UNPROCESSABLE_ENTITY);
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function checkExternalAuthorizer(): ?bool
+    {
+        $isNotAuthorized = !$this->externalAuthorizerService->isAuthorized();
+
+        if ($isNotAuthorized) {
+            throw new TransferException(
+                trans('messages.external_authenticator_error'),
+                HttpStatusConstant::UNPROCESSABLE_ENTITY,
+            );
         }
 
         return true;
