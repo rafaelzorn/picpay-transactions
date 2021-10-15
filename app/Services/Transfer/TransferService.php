@@ -5,11 +5,13 @@ namespace App\Services\Transfer;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
-use App\Repositories\TransactionLog\Contracts\TransactionLogRepositoryInterface;
+use App\Repositories\TransactionErrorLog\Contracts\TransactionErrorLogRepositoryInterface;
 use App\Services\Transfer\Contracts\TransferServiceInterface;
 use App\Services\Transfer\TransferValidate;
 use App\Exceptions\TransferValidateException;
 use App\Constants\HttpStatusConstant;
+use App\Services\Transfer\Transaction;
+use App\Resources\TransferResource;
 
 class TransferService implements TransferServiceInterface
 {
@@ -24,26 +26,34 @@ class TransferService implements TransferServiceInterface
     private $userRepository;
 
     /**
-     * @var $transactionLogRepository
+     * @var $transactionErrorLog
      */
-    private $transactionLogRepository;
+    private $transactionErrorLog;
+
+    /**
+     * @var $transaction
+     */
+    private $transaction;
 
     /**
      * @param TransferValidate $transferValidate
      * @param UserRepositoryInterface $userRepository
-     * @param TransactionLogRepositoryInterface $transactionLogRepository
+     * @param TransactionErrorLogRepositoryInterface $transactionErrorLog
+     * @param Transaction $transaction
      *
      * @return void
      */
     public function __construct(
         TransferValidate $transferValidate,
         UserRepositoryInterface $userRepository,
-        TransactionLogRepositoryInterface $transactionLogRepository
+        TransactionErrorLogRepositoryInterface $transactionErrorLog,
+        Transaction $transaction
     )
     {
-        $this->transferValidate         = $transferValidate;
-        $this->userRepository           = $userRepository;
-        $this->transactionLogRepository = $transactionLogRepository;
+        $this->transferValidate    = $transferValidate;
+        $this->userRepository      = $userRepository;
+        $this->transaction         = $transaction;
+        $this->transactionErrorLog = $transactionErrorLog;
     }
 
     /**
@@ -56,21 +66,35 @@ class TransferService implements TransferServiceInterface
         try {
             $this->transferValidate->validate($data);
 
-            DB::beginTransaction();
-
             $payer = $this->userRepository->findByAttribute('document', $data['payer_document']);
             $payee = $this->userRepository->findByAttribute('document', $data['payee_document']);
 
-            dd($payer->wallet);
+            $this->transaction
+                 ->setPayerWallet($payer->wallet)
+                 ->setPayeeWallet($payee->wallet)
+                 ->setValue($data['value'])
+                 ->requested();
+
+            DB::beginTransaction();
+
+            $this->transaction->withdrawWalletPayer();
+            $this->transaction->depositWalletPayee();
 
             DB::commit();
+
+            $this->transaction->completed();
+
+            $transaction = new TransferResource($this->transaction);
 
             return [
                 'code'    => HttpStatusConstant::OK,
                 'message' => trans('messages.transfer_successfully'),
+                'data'    => $transaction,
             ];
         } catch (Exception $e) {
             DB::rollBack();
+
+            $this->failed($data, $e, $this->transaction);
 
             switch (get_class($e)) {
                 case TransferValidateException::class:
@@ -82,5 +106,22 @@ class TransferService implements TransferServiceInterface
                     ];
             }
         }
+    }
+
+    private function failed(array $data, Exception $e, Transaction $transaction)
+    {
+        $information = [];
+
+        if (!is_null($transaction->get())) {
+            $information = ['transaction_id' => $transaction->get()->id];
+
+            $transaction->failed();
+        }
+
+        $information['payer_document'] = $data['payer_document'];
+        $information['payee_document'] = $data['payee_document'];
+        $information['value']          = $data['value'];
+
+        $this->transactionErrorLog->saveLog($e, $information);
     }
 }
