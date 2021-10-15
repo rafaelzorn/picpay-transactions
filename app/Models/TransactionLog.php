@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Wallet extends Model
+class TransactionLog extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,8 +12,9 @@ class Wallet extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
-        'balance',
+        'transaction_id',
+        'message',
+        'trace',
     ];
 
     /**
@@ -22,8 +23,7 @@ class Wallet extends Model
      * @var array
      */
     protected $hidden = [
-        'id',
-        'user_id',
+        'transaction_id',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -35,10 +35,11 @@ class Wallet extends Model
      * @var array
      */
     protected $casts = [
-        'user_id'    => 'integer',
-        'balance'    => 'decimal:2',
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-        'deleted_at' => 'datetime:Y-m-d H:i:s',
+        'transaction_id' => 'integer',
+        'message'        => 'string',
+        'trace'          => 'string',
+        'created_at'     => 'datetime:Y-m-d H:i:s',
+        'updated_at'     => 'datetime:Y-m-d H:i:s',
+        'deleted_at'     => 'datetime:Y-m-d H:i:s',
     ];
 }

@@ -8,4 +8,5 @@ return [
     'payee_not_found'              => 'O CPF/CNPJ de quem irá receber não foi encontrado.',
     'shopkeeper_cannot_transfer'   => 'Lojista não pode realizar transferência.',
     'external_authenticator_error' => 'Autenticador externo: Não foi possível autenticar a sua transação.',
+    'tranfer_for_yourself'         => 'Não é possível realizar transferências entre dois CPF iguais',
 ];

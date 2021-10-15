@@ -2,10 +2,13 @@
 
 namespace App\Services\Transfer;
 
+use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Repositories\User\Contracts\UserRepositoryInterface;
+use App\Repositories\TransactionLog\Contracts\TransactionLogRepositoryInterface;
 use App\Services\Transfer\Contracts\TransferServiceInterface;
 use App\Services\Transfer\TransferValidate;
-use App\Exceptions\TransferException;
+use App\Exceptions\TransferValidateException;
 use App\Constants\HttpStatusConstant;
 
 class TransferService implements TransferServiceInterface
@@ -16,13 +19,31 @@ class TransferService implements TransferServiceInterface
     private $transferValidate;
 
     /**
+     * @var $userRepository
+     */
+    private $userRepository;
+
+    /**
+     * @var $transactionLogRepository
+     */
+    private $transactionLogRepository;
+
+    /**
      * @param TransferValidate $transferValidate
+     * @param UserRepositoryInterface $userRepository
+     * @param TransactionLogRepositoryInterface $transactionLogRepository
      *
      * @return void
      */
-    public function __construct(TransferValidate $transferValidate)
+    public function __construct(
+        TransferValidate $transferValidate,
+        UserRepositoryInterface $userRepository,
+        TransactionLogRepositoryInterface $transactionLogRepository
+    )
     {
-        $this->transferValidate = $transferValidate;
+        $this->transferValidate         = $transferValidate;
+        $this->userRepository           = $userRepository;
+        $this->transactionLogRepository = $transactionLogRepository;
     }
 
     /**
@@ -35,15 +56,24 @@ class TransferService implements TransferServiceInterface
         try {
             $this->transferValidate->validate($data);
 
-            // TODO: Iniciar processo de transferencia
+            DB::beginTransaction();
+
+            $payer = $this->userRepository->findByAttribute('document', $data['payer_document']);
+            $payee = $this->userRepository->findByAttribute('document', $data['payee_document']);
+
+            dd($payer->wallet);
+
+            DB::commit();
 
             return [
                 'code'    => HttpStatusConstant::OK,
                 'message' => trans('messages.transfer_successfully'),
             ];
         } catch (Exception $e) {
+            DB::rollBack();
+
             switch (get_class($e)) {
-                case TransferException::class:
+                case TransferValidateException::class:
                     return ['code' => $e->getCode(), 'message' => $e->getMessage()];
                 default:
                     return [

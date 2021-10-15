@@ -3,7 +3,7 @@
 namespace App\Services\Transfer;
 
 use Exception;
-use App\Exceptions\TransferException;
+use App\Exceptions\TransferValidateException;
 use App\Constants\HttpStatusConstant;
 use App\Constants\UserTypeConstant;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
@@ -43,10 +43,11 @@ class TransferValidate
      */
     public function validate(array $data): void
     {
-        $this->isShopkeeper($data['payer_document']);
         $this->payerExists($data['payer_document']);
-        $this->payerHasEnoughBalance($data['payer_document'], $data['value']);
         $this->payeeExists($data['payee_document']);
+        $this->transferIsNotForYourself($data['payer_document'], $data['payee_document']);
+        $this->isNotShopkeeper($data['payer_document']);
+        $this->payerHasEnoughBalance($data['payer_document'], $data['value']);
         $this->checkExternalAuthorizer();
     }
 
@@ -60,7 +61,47 @@ class TransferValidate
         $payerDoesNotExists = !$this->userRepository->findByAttribute('document', $payerDocument);
 
         if ($payerDoesNotExists) {
-            throw new TransferException(trans('messages.payer_not_found'), HttpStatusConstant::UNPROCESSABLE_ENTITY);
+            throw new TransferValidateException(
+                trans('messages.payer_not_found'),
+                HttpStatusConstant::UNPROCESSABLE_ENTITY,
+            );
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $payeeDocument
+     *
+     * @return bool
+     */
+    private function payeeExists(string $payeeDocument): ?bool
+    {
+        $payeeDoesNotExists = !$this->userRepository->findByAttribute('document', $payeeDocument);
+
+        if ($payeeDoesNotExists) {
+            throw new TransferValidateException(
+                trans('messages.payee_not_found'),
+                HttpStatusConstant::UNPROCESSABLE_ENTITY,
+            );
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $payerDocument
+     * @param string $payeeDocument
+     *
+     * @return bool
+     */
+    private function transferIsNotForYourself(string $payerDocument, string $payeeDocument): ?bool
+    {
+        if ($payerDocument === $payeeDocument) {
+            throw new TransferValidateException(
+                trans('messages.tranfer_for_yourself'),
+                HttpStatusConstant::UNPROCESSABLE_ENTITY,
+            );
         }
 
         return true;
@@ -71,12 +112,15 @@ class TransferValidate
      *
      * @return bool
      */
-    private function isShopkeeper(string $payerDocument): ?bool
+    private function isNotShopkeeper(string $payerDocument): ?bool
     {
         $payer = $this->userRepository->findByAttribute('document', $payerDocument);
 
         if ($payer->type == UserTypeConstant::SHOPKEEPER) {
-            throw new TransferException(trans('messages.shopkeeper_cannot_transfer'), HttpStatusConstant::UNPROCESSABLE_ENTITY);
+            throw new TransferValidateException(
+                trans('messages.shopkeeper_cannot_transfer'),
+                HttpStatusConstant::UNPROCESSABLE_ENTITY,
+            );
         }
 
         return true;
@@ -93,23 +137,10 @@ class TransferValidate
         $payer = $this->userRepository->findByAttribute('document', $payerDocument);
 
         if ($payer->wallet->balance < $value) {
-            throw new TransferException(trans('messages.insufficient_balance'), HttpStatusConstant::UNPROCESSABLE_ENTITY);
-        }
-
-        return true;
-    }
-
-    /**
-     * @param string $payeeDocument
-     *
-     * @return bool
-     */
-    private function payeeExists(string $payeeDocument): ?bool
-    {
-        $payeeDoesNotExists = !$this->userRepository->findByAttribute('document', $payeeDocument);
-
-        if ($payeeDoesNotExists) {
-            throw new TransferException(trans('messages.payee_not_found'), HttpStatusConstant::UNPROCESSABLE_ENTITY);
+            throw new TransferValidateException(
+                trans('messages.insufficient_balance'),
+                HttpStatusConstant::UNPROCESSABLE_ENTITY,
+            );
         }
 
         return true;
@@ -123,9 +154,9 @@ class TransferValidate
         $isNotAuthorized = !$this->externalAuthorizerService->isAuthorized();
 
         if ($isNotAuthorized) {
-            throw new TransferException(
+            throw new TransferValidateException(
                 trans('messages.external_authenticator_error'),
-                HttpStatusConstant::UNPROCESSABLE_ENTITY,
+                HttpStatusConstant::UNAUTHORIZED,
             );
         }
 

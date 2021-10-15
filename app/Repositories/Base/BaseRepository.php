@@ -50,4 +50,15 @@ abstract class BaseRepository implements BaseRepositoryInterface
     {
         return $this->model->where($attribute, $value)->first();
     }
+
+    /**
+     * @param Model $model
+     * @param array $attributes
+     *
+     * @return bool
+     */
+    public function update(Model $model, array $attributes): bool
+    {
+        return $model->update($attributes);
+    }
 }
