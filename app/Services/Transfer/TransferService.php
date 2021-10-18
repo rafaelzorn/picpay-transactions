@@ -14,6 +14,7 @@ use App\Services\Transfer\TransferValidateData;
 use App\Constants\HttpStatusConstant;
 use App\Services\Transfer\Transaction;
 use App\Resources\TransferResource;
+use App\Helpers\FormatHelper;
 
 class TransferService implements TransferServiceInterface
 {
@@ -74,8 +75,8 @@ class TransferService implements TransferServiceInterface
     public function handle(array $data): array
     {
         try {
-            $data['payer_document'] = preg_replace('/[^0-9]/', '', $data['payer_document']);
-            $data['payee_document'] = preg_replace('/[^0-9]/', '', $data['payee_document']);
+            $data['payer_document'] = FormatHelper::onlyNumbers($data['payer_document']);
+            $data['payee_document'] = FormatHelper::onlyNumbers($data['payee_document']);
 
             $this->transferValidateData->validate($data);
 

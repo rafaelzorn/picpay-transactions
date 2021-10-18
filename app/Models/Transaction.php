@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Wallet;
 
 class Transaction extends Model
@@ -47,12 +48,18 @@ class Transaction extends Model
         'deleted_at'      => 'datetime:Y-m-d H:i:s',
     ];
 
-    public function payerWallet()
+    /**
+     * @return BelongsTo
+     */
+    public function payerWallet(): BelongsTo
     {
         return $this->belongsTo(Wallet::class,  'payer_wallet_id');
     }
 
-    public function payeeWallet()
+    /**
+     * @return BelongsTo
+     */
+    public function payeeWallet(): BelongsTo
     {
         return $this->belongsTo(Wallet::class,  'payee_wallet_id');
     }

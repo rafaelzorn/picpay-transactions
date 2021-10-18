@@ -13,6 +13,13 @@ class TransferResource extends JsonResource
      */
     public function toArray($request): array
     {
-        return ['id' => ''];
+        $transaction = $this->get();
+
+        return [
+            'payer_document' => $transaction->payerWallet->user->document,
+            'payee_document' => $transaction->payeeWallet->user->document,
+            'value'          => $transaction->value,
+            'status'         => trans('transaction-status.' . $transaction->status),
+        ];
     }
 }
