@@ -3,37 +3,26 @@
 namespace App\Services\Transfer;
 
 use Exception;
-use App\Exceptions\TransferValidateException;
+use App\Exceptions\TransferValidateDataException;
 use App\Constants\HttpStatusConstant;
 use App\Constants\UserTypeConstant;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
-use App\Services\ExternalAuthorizer\Contracts\ExternalAuthorizerServiceInterface;
 
-class TransferValidate
+class TransferValidateData
 {
     /**
-     * @var $userRepository
+     * @var UserRepositoryInterface $userRepository
      */
     private $userRepository;
 
     /**
-     * @var $externalAuthorizerService
-     */
-    private $externalAuthorizerService;
-
-    /**
      * @param UserRepositoryInterface $userRepository
-     * @param ExternalAuthorizerServiceInterface $externalAuthorizerService
      *
      * @return void
      */
-    public function __construct(
-        UserRepositoryInterface $userRepository,
-        ExternalAuthorizerServiceInterface $externalAuthorizerService
-    )
+    public function __construct(UserRepositoryInterface $userRepository)
     {
-        $this->userRepository            = $userRepository;
-        $this->externalAuthorizerService = $externalAuthorizerService;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -48,7 +37,6 @@ class TransferValidate
         $this->transferIsNotForYourself($data['payer_document'], $data['payee_document']);
         $this->isNotShopkeeper($data['payer_document']);
         $this->payerHasEnoughBalance($data['payer_document'], $data['value']);
-        $this->checkExternalAuthorizer();
     }
 
     /**
@@ -61,7 +49,7 @@ class TransferValidate
         $payerDoesNotExists = !$this->userRepository->findByAttribute('document', $payerDocument);
 
         if ($payerDoesNotExists) {
-            throw new TransferValidateException(
+            throw new TransferValidateDataException(
                 trans('messages.payer_not_found'),
                 HttpStatusConstant::UNPROCESSABLE_ENTITY,
             );
@@ -80,7 +68,7 @@ class TransferValidate
         $payeeDoesNotExists = !$this->userRepository->findByAttribute('document', $payeeDocument);
 
         if ($payeeDoesNotExists) {
-            throw new TransferValidateException(
+            throw new TransferValidateDataException(
                 trans('messages.payee_not_found'),
                 HttpStatusConstant::UNPROCESSABLE_ENTITY,
             );
@@ -98,7 +86,7 @@ class TransferValidate
     private function transferIsNotForYourself(string $payerDocument, string $payeeDocument): ?bool
     {
         if ($payerDocument === $payeeDocument) {
-            throw new TransferValidateException(
+            throw new TransferValidateDataException(
                 trans('messages.tranfer_for_yourself'),
                 HttpStatusConstant::UNPROCESSABLE_ENTITY,
             );
@@ -117,7 +105,7 @@ class TransferValidate
         $payer = $this->userRepository->findByAttribute('document', $payerDocument);
 
         if ($payer->type == UserTypeConstant::SHOPKEEPER) {
-            throw new TransferValidateException(
+            throw new TransferValidateDataException(
                 trans('messages.shopkeeper_cannot_transfer'),
                 HttpStatusConstant::UNPROCESSABLE_ENTITY,
             );
@@ -137,26 +125,9 @@ class TransferValidate
         $payer = $this->userRepository->findByAttribute('document', $payerDocument);
 
         if ($payer->wallet->balance < $value) {
-            throw new TransferValidateException(
+            throw new TransferValidateDataException(
                 trans('messages.insufficient_balance'),
                 HttpStatusConstant::UNPROCESSABLE_ENTITY,
-            );
-        }
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    private function checkExternalAuthorizer(): ?bool
-    {
-        $isNotAuthorized = !$this->externalAuthorizerService->isAuthorized();
-
-        if ($isNotAuthorized) {
-            throw new TransferValidateException(
-                trans('messages.external_authenticator_error'),
-                HttpStatusConstant::UNAUTHORIZED,
             );
         }
 

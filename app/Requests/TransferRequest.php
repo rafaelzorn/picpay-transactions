@@ -2,6 +2,9 @@
 
 namespace App\Requests;
 
+use App\Rules\DocumentRule;
+use App\Constants\DocumentTypeConstant;
+
 class TransferRequest
 {
     /**
@@ -10,9 +13,12 @@ class TransferRequest
     public static function rules(): array
     {
         return [
-            'payer_document' => 'required|numeric',
-            'payee_document' => 'required|numeric',
-            'value'          => 'required|numeric|between:0.01,999.99',
+            'payer_document' => ['required', new DocumentRule(DocumentTypeConstant::CPF)],
+            'payee_document' => [
+                'required',
+                new DocumentRule(DocumentTypeConstant::CPF, DocumentTypeConstant::CNPJ)
+            ],
+            'value' => 'required|numeric|between:0.01,999.99',
         ];
     }
 
@@ -24,8 +30,6 @@ class TransferRequest
         return [
             'payer_document.required' => trans('validation.payer_document_required'),
             'payee_document.required' => trans('validation.payee_document_required'),
-            'payer_document.numeric'  => trans('validation.payer_document_numeric'),
-            'payee_document.numeric'  => trans('validation.payee_document_numeric'),
             'value.required'          => trans('validation.value_required'),
             'value.numeric'           => trans('validation.value_numeric'),
             'value.between'           => trans('validation.value_between'),

@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
             $this->userRepository->create([
                 'id'        => 1,
                 'full_name' => 'Rafael Zorn',
-                'document'  => '00000000001',
+                'document'  => '48267677062',
                 'email'     => 'rafael@gmail.com.br',
                 'password'  => Hash::make(123456),
                 'type'      => UserTypeConstant::USER,
@@ -50,7 +50,7 @@ class UserSeeder extends Seeder
             $this->userRepository->create([
                 'id'        => 2,
                 'full_name' => 'Bruna Caroline Cardozo',
-                'document'  => '00000000002',
+                'document'  => '81347820000',
                 'email'     => 'bruna@gmail.com.br',
                 'password'  => Hash::make(654321),
                 'type'      => UserTypeConstant::USER,
@@ -63,7 +63,7 @@ class UserSeeder extends Seeder
             $this->userRepository->create([
                 'id'        => 3,
                 'full_name' => 'Lojista S/A',
-                'document'  => '00000000000001',
+                'document'  => '70915585000155',
                 'email'     => 'lojista-contato@gmail.com.br',
                 'password'  => Hash::make(1234567),
                 'type'      => UserTypeConstant::SHOPKEEPER,

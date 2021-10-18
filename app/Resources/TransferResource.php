@@ -13,8 +13,6 @@ class TransferResource extends JsonResource
      */
     public function toArray($request): array
     {
-        return [
-            'id' => 1,
-        ];
+        return ['id' => ''];
     }
 }

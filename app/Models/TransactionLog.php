@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TransactionErrorLog extends Model
+class TransactionLog extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,9 +12,12 @@ class TransactionErrorLog extends Model
      * @var array
      */
     protected $fillable = [
-        'information',
-        'exception_message',
-        'exception_trace',
+        'transaction_id',
+        'payer_document',
+        'payee_document',
+        'value',
+        'message',
+        'trace',
     ];
 
     /**
@@ -23,6 +26,7 @@ class TransactionErrorLog extends Model
      * @var array
      */
     protected $hidden = [
+        'transaction_id',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -34,7 +38,10 @@ class TransactionErrorLog extends Model
      * @var array
      */
     protected $casts = [
-        'information'       => 'string',
+        'transaction_id'    => 'integer',
+        'payer_document'    => 'string',
+        'payee_document'    => 'string',
+        'value'             => 'decimal:2',
         'exception_message' => 'string',
         'exception_trace'   => 'string',
         'created_at'        => 'datetime:Y-m-d H:i:s',

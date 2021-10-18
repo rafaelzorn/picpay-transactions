@@ -2,13 +2,15 @@
 
 namespace App\Services\Transfer;
 
-use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use App\Exceptions\TransferValidateDataException;
+use App\Exceptions\ExternalAuthorizerException;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
-use App\Repositories\TransactionErrorLog\Contracts\TransactionErrorLogRepositoryInterface;
 use App\Services\Transfer\Contracts\TransferServiceInterface;
-use App\Services\Transfer\TransferValidate;
-use App\Exceptions\TransferValidateException;
+use App\Services\ExternalAuthorizer\Contracts\ExternalAuthorizerServiceInterface;
+use App\Repositories\TransactionLog\Contracts\TransactionLogRepositoryInterface;
+use App\Services\Transfer\TransferValidateData;
 use App\Constants\HttpStatusConstant;
 use App\Services\Transfer\Transaction;
 use App\Resources\TransferResource;
@@ -16,9 +18,9 @@ use App\Resources\TransferResource;
 class TransferService implements TransferServiceInterface
 {
     /**
-     * @var $transferValidate
+     * @var $transferValidateData
      */
-    private $transferValidate;
+    private $transferValidateData;
 
     /**
      * @var $userRepository
@@ -26,34 +28,42 @@ class TransferService implements TransferServiceInterface
     private $userRepository;
 
     /**
-     * @var $transactionErrorLog
-     */
-    private $transactionErrorLog;
-
-    /**
      * @var $transaction
      */
     private $transaction;
 
     /**
-     * @param TransferValidate $transferValidate
+     * @var $externalAuthorizerService
+     */
+    private $externalAuthorizerService;
+
+    /**
+     * @var $transactionLogRepository
+     */
+    private $transactionLogRepository;
+
+    /**
+     * @param TransferValidateData $transferValidateData
      * @param UserRepositoryInterface $userRepository
-     * @param TransactionErrorLogRepositoryInterface $transactionErrorLog
      * @param Transaction $transaction
+     * @param ExternalAuthorizerServiceInterface $externalAuthorizerService
+     * @param TransactionLogRepositoryInterface $transactionLogRepository
      *
      * @return void
      */
     public function __construct(
-        TransferValidate $transferValidate,
+        TransferValidateData $transferValidateData,
         UserRepositoryInterface $userRepository,
-        TransactionErrorLogRepositoryInterface $transactionErrorLog,
-        Transaction $transaction
+        Transaction $transaction,
+        ExternalAuthorizerServiceInterface $externalAuthorizerService,
+        TransactionLogRepositoryInterface $transactionLogRepository,
     )
     {
-        $this->transferValidate    = $transferValidate;
-        $this->userRepository      = $userRepository;
-        $this->transaction         = $transaction;
-        $this->transactionErrorLog = $transactionErrorLog;
+        $this->transferValidateData      = $transferValidateData;
+        $this->userRepository            = $userRepository;
+        $this->transaction               = $transaction;
+        $this->externalAuthorizerService = $externalAuthorizerService;
+        $this->transactionLogRepository  = $transactionLogRepository;
     }
 
     /**
@@ -64,7 +74,10 @@ class TransferService implements TransferServiceInterface
     public function handle(array $data): array
     {
         try {
-            $this->transferValidate->validate($data);
+            $data['payer_document'] = preg_replace('/[^0-9]/', '', $data['payer_document']);
+            $data['payee_document'] = preg_replace('/[^0-9]/', '', $data['payee_document']);
+
+            $this->transferValidateData->validate($data);
 
             $payer = $this->userRepository->findByAttribute('document', $data['payer_document']);
             $payee = $this->userRepository->findByAttribute('document', $data['payee_document']);
@@ -80,6 +93,8 @@ class TransferService implements TransferServiceInterface
             $this->transaction->withdrawWalletPayer();
             $this->transaction->depositWalletPayee();
 
+            $this->externalAuthorizerService->isAuthorized();
+
             DB::commit();
 
             $this->transaction->completed();
@@ -94,10 +109,10 @@ class TransferService implements TransferServiceInterface
         } catch (Exception $e) {
             DB::rollBack();
 
-            $this->failed($data, $e, $this->transaction);
+            $this->transactionFailed($data, $e, $this->transaction);
 
             switch (get_class($e)) {
-                case TransferValidateException::class:
+                case TransferValidateDataException::class || ExternalAuthorizerException::class:
                     return ['code' => $e->getCode(), 'message' => $e->getMessage()];
                 default:
                     return [
@@ -108,20 +123,30 @@ class TransferService implements TransferServiceInterface
         }
     }
 
-    private function failed(array $data, Exception $e, Transaction $transaction)
+    /**
+     * @param array $data
+     * @param Exception $e
+     * @param Transaction $transaction
+     *
+     * @return void
+     */
+    private function transactionFailed(array $data, Exception $e, Transaction $transaction): void
     {
-        $information = [];
+        $transactionId = null;
 
         if (!is_null($transaction->get())) {
-            $information = ['transaction_id' => $transaction->get()->id];
+            $transactionId = $transaction->get()->id;
 
             $transaction->failed();
         }
 
-        $information['payer_document'] = $data['payer_document'];
-        $information['payee_document'] = $data['payee_document'];
-        $information['value']          = $data['value'];
-
-        $this->transactionErrorLog->saveLog($e, $information);
+        $this->transactionLogRepository->create([
+            'transaction_id' => $transactionId,
+            'payer_document' => $data['payer_document'],
+            'payee_document' => $data['payee_document'],
+            'value'          => $data['value'],
+            'message'        => $e->getMessage(),
+            'trace'          => $e->getTraceAsString(),
+        ]);
     }
 }
