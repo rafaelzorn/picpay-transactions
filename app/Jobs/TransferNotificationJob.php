@@ -61,6 +61,7 @@ class TransferNotificationJob extends Job
      */
     public function failed(Throwable $exception): void
     {
-        // TODO Salvar log caso falhar todas tentativas de envio
+        // TODO
+        // print($this->attempts());
     }
 }
