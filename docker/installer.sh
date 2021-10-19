@@ -15,7 +15,7 @@ echo ""
 docker-compose up -d
 
 echo ""
-echo "=================================================> 14.2%"
+echo "=================================================> 12.5%"
 echo ""
 
 echo ""
@@ -25,7 +25,7 @@ echo ""
 docker exec picpay-transactions-api cp .env.example .env
 
 echo ""
-echo "=================================================> 28%"
+echo "=================================================> 25%"
 echo ""
 
 echo ""
@@ -35,7 +35,7 @@ echo ""
 docker exec picpay-transactions-api composer install --ignore-platform-req=php
 
 echo ""
-echo "=================================================> 42.6%"
+echo "=================================================> 37.5%"
 echo ""
 
 echo ""
@@ -45,7 +45,7 @@ echo ""
 docker exec picpay-transactions-api php artisan migrate
 
 echo ""
-echo "=================================================> 56.8%"
+echo "=================================================> 50%"
 echo ""
 
 echo ""
@@ -55,21 +55,31 @@ echo ""
 docker exec picpay-transactions-api php artisan db:seed
 
 echo ""
-echo "=================================================> 71%"
+echo "=================================================> 62.5%"
 echo ""
 
 echo ""
-echo "6) Running integration tests"
+echo "6) Run the listener"
+echo ""
+
+docker exec picpay-transactions-api php artisan queue:listen
+
+echo ""
+echo "=================================================> 75%"
+echo ""
+
+echo ""
+echo "7) Running integration tests"
 echo ""
 
 docker exec picpay-transactions-api vendor/bin/phpunit tests/Integration/ --testdox
 
 echo ""
-echo "=================================================> 85.2%"
+echo "=================================================> 87.5%"
 echo ""
 
 echo ""
-echo "7) Running unit tests"
+echo "8) Running unit tests"
 echo ""
 
 docker exec picpay-transactions-api vendor/bin/phpunit tests/Unit/ --testdox

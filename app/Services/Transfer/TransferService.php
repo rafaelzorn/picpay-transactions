@@ -4,6 +4,7 @@ namespace App\Services\Transfer;
 
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use App\Exceptions\TransferValidateDataException;
 use App\Exceptions\ExternalAuthorizerException;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
@@ -12,9 +13,11 @@ use App\Services\ExternalAuthorizer\Contracts\ExternalAuthorizerServiceInterface
 use App\Repositories\TransactionLog\Contracts\TransactionLogRepositoryInterface;
 use App\Services\Transfer\TransferValidateData;
 use App\Constants\HttpStatusConstant;
+use App\Constants\EnvironmentConstant;
 use App\Services\Transfer\Transaction;
 use App\Resources\TransferResource;
 use App\Helpers\FormatHelper;
+use App\Jobs\TransferNotificationJob;
 
 class TransferService implements TransferServiceInterface
 {
@@ -100,12 +103,14 @@ class TransferService implements TransferServiceInterface
 
             $this->transaction->completed();
 
-            $transaction = new TransferResource($this->transaction);
+            $this->dispatch($this->transaction);
+
+            $data = new TransferResource($this->transaction);
 
             return [
                 'code'    => HttpStatusConstant::OK,
                 'message' => trans('messages.transfer_successfully'),
-                'data'    => $transaction,
+                'data'    => $data,
             ];
         } catch (Exception $e) {
             DB::rollBack();
@@ -149,5 +154,21 @@ class TransferService implements TransferServiceInterface
             'message'        => $e->getMessage(),
             'trace'          => $e->getTraceAsString(),
         ]);
+    }
+
+    /**
+     * @param Transaction $transaction
+     *
+     * @return void
+     */
+    private function dispatch(Transaction $transaction)
+    {
+        $job = new TransferNotificationJob($transaction->get());
+
+        if (getenv('APP_ENV') == EnvironmentConstant::LOCAL) {
+            $job->delay(Carbon::now()->addSeconds(10));
+        }
+
+        dispatch($job);
     }
 }

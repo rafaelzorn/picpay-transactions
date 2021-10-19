@@ -15,16 +15,15 @@ class ExternalAuthorizerService implements ExternalAuthorizerServiceInterface
      */
     public function isAuthorized(): bool
     {
-        $externalAuthorizerUrl = getenv('EXTERNAL_AUTHORIZER_URL');
-        $response              = Http::get($externalAuthorizerUrl);
+        $externalAuthorizerEndpoint = getenv('EXTERNAL_AUTHORIZER_ENDPOINT');
+        $response                   = Http::get($externalAuthorizerEndpoint);
 
-        if ($response->serverError() || $response->failed() || $response->clientError()) {
-            return false;
-        }
-
-        $isNotAuthorized = $response->json()['message'] !== ExternalAuthorizerConstant::AUTHORIZED;
-
-        if ($isNotAuthorized) {
+        if (
+            $response->serverError() ||
+            $response->failed() ||
+            $response->clientError() ||
+            $response->json()['message'] !== ExternalAuthorizerConstant::AUTHORIZED
+        ) {
             throw new ExternalAuthorizerException(
                 trans('messages.external_authenticator_error'),
                 HttpStatusConstant::UNAUTHORIZED,

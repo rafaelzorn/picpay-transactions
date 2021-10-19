@@ -9,4 +9,5 @@ return [
     'shopkeeper_cannot_transfer'   => 'Lojista não pode realizar transferência.',
     'external_authenticator_error' => 'Autenticador externo: Não foi possível autenticar a sua transação.',
     'tranfer_for_yourself'         => 'Não é possível realizar transferências entre dois CPF iguais',
+    'external_notification_error'  => 'Serviço de notificação externo indisponível no momento.',
 ];

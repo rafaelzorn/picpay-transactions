@@ -7,6 +7,8 @@ use App\Services\Transfer\TransferService;
 use App\Services\Transfer\Contracts\TransferServiceInterface;
 use App\Services\ExternalAuthorizer\ExternalAuthorizerService;
 use App\Services\ExternalAuthorizer\Contracts\ExternalAuthorizerServiceInterface;
+use App\Services\ExternalNotification\ExternalNotificationService;
+use App\Services\ExternalNotification\Contracts\ExternalNotificationServiceInterface;
 
 class ServiceServiceProvider extends BaseServiceProvider
 {
@@ -19,6 +21,10 @@ class ServiceServiceProvider extends BaseServiceProvider
         $this->app->bind(
             ExternalAuthorizerServiceInterface::class,
             ExternalAuthorizerService::class,
+        );
+        $this->app->bind(
+            ExternalNotificationServiceInterface::class,
+            ExternalNotificationService::class,
         );
     }
 }

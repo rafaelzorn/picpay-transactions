@@ -2,6 +2,7 @@ version: "3.8"
 services:
   environment:
     environment:
+      RABBITMQ_SERVER: rabbitmq
       DB_HOST: mysql
     build: .
     container_name: picpay-transactions-api
@@ -11,9 +12,17 @@ services:
       - "8000:8000"
     command: php -S 0.0.0.0:8000 -t public/
     depends_on:
+      - rabbitmq
       - mysql
     links:
+      - rabbitmq
       - mysql
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
   mysql:
     image: mysql:5.7
     container_name: picpay-transactions-db
