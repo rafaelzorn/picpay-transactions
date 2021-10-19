@@ -161,12 +161,12 @@ class TransferService implements TransferServiceInterface
      *
      * @return void
      */
-    private function dispatch(Transaction $transaction)
+    private function dispatch(Transaction $transaction): void
     {
         $job = new TransferNotificationJob($transaction->get());
 
         if (getenv('APP_ENV') == EnvironmentConstant::LOCAL) {
-            $job->delay(Carbon::now()->addSeconds(10));
+            $job->delay(Carbon::now()->addSeconds(5));
         }
 
         dispatch($job);

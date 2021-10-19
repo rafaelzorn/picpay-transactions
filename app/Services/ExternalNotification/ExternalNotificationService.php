@@ -10,9 +10,12 @@ use App\Services\ExternalNotification\Contracts\ExternalNotificationServiceInter
 class ExternalNotificationService implements ExternalNotificationServiceInterface
 {
     /**
+     * @param string $to
+     * @param string $message
+     *
      * @return bool
      */
-    public function send(): bool
+    public function send(string $to, string $message): bool
     {
         $externalNotificationEndpoint = getenv('EXTERNAL_NOTIFICATION_ENDPOINT');
         $response                     = Http::get($externalNotificationEndpoint);

@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\Transaction;
 use App\Services\ExternalNotification\Contracts\ExternalNotificationServiceInterface;
+use App\Helpers\FormatHelper;
+use Throwable;
 
 class TransferNotificationJob extends Job
 {
@@ -33,12 +35,32 @@ class TransferNotificationJob extends Job
     }
 
     /**
+     * @param ExternalNotificationServiceInterface $externalNotificationService
+     *
      * @return void
      */
     public function handle(ExternalNotificationServiceInterface $externalNotificationService): void
     {
-        // $this->transaction
+        $payer = $this->transaction->payerWallet->user;
+        $payee = $this->transaction->payeeWallet->user;
 
-        $externalNotificationService->send();
+        $message = trans('messages.transfer_notification', [
+            'payee_full_name' => $payee->full_name,
+            'payer_full_name' => $payer->full_name,
+            'created_at'      => FormatHelper::formatMysqlDateTime($this->transaction->created_at),
+            'value'           => FormatHelper::formatMoneyToBrl($this->transaction->value),
+        ]);
+
+        $externalNotificationService->send($payee->email, $message);
+    }
+
+    /**
+     * @param Throwable $exception
+     *
+     * @return void
+     */
+    public function failed(Throwable $exception): void
+    {
+        // TODO Salvar log caso falhar todas tentativas de envio
     }
 }
