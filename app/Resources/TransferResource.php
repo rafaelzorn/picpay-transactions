@@ -3,6 +3,7 @@
 namespace App\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Helpers\FormatHelper;
 
 class TransferResource extends JsonResource
 {
@@ -20,6 +21,7 @@ class TransferResource extends JsonResource
             'payee_document' => $transaction->payeeWallet->user->document,
             'value'          => $transaction->value,
             'status'         => trans('transaction-status.' . $transaction->status),
+            'created_at'     => FormatHelper::formatMysqlDateTime($transaction->created_at),
         ];
     }
 }
