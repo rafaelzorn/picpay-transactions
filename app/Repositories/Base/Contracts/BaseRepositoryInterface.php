@@ -27,4 +27,12 @@ interface BaseRepositoryInterface
      * @return Model
      */
     public function findByAttribute(string $attribute, mixed $value): ?Model;
+
+    /**
+     * @param array $attributes
+     * @param array $values
+     *
+     * @return Model
+     */
+    public function updateOrCreate(array $attributes, array $values = []): Model;
 }

@@ -5,6 +5,8 @@ namespace App\Helpers;
 class ValidationHelper
 {
     /**
+     * Taken from https://gist.github.com/rafael-neri/ab3e58803a08cb4def059fce4e3c0e40
+     *
      * @param string $document
      *
      * @return bool
@@ -37,6 +39,8 @@ class ValidationHelper
     }
 
     /**
+     * Taken from https://gist.github.com/guisehn/3276302
+     *
      * @param string $document
      *
      * @return bool

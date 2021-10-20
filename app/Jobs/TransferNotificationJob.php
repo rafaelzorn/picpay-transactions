@@ -2,10 +2,12 @@
 
 namespace App\Jobs;
 
+use Exception;
 use App\Models\Transaction;
+use App\Repositories\TransferNotificationLog\Contracts\TransferNotificationLogRepositoryInterface;
 use App\Services\ExternalNotification\Contracts\ExternalNotificationServiceInterface;
 use App\Helpers\FormatHelper;
-use Throwable;
+use App\Constants\TransferNotificationLogStatusConstant;
 
 class TransferNotificationJob extends Job
 {
@@ -25,6 +27,16 @@ class TransferNotificationJob extends Job
     private $transaction;
 
     /**
+     * @var $transferNotificationLogRepository
+     */
+    private $transferNotificationLogRepository;
+
+    /**
+     * @var $externalNotificationService
+     */
+    private $externalNotificationService;
+
+    /**
      * @param Transaction $transaction
      *
      * @return void
@@ -36,10 +48,25 @@ class TransferNotificationJob extends Job
 
     /**
      * @param ExternalNotificationServiceInterface $externalNotificationService
+     * @param TransferNotificationLogRepositoryInterface $transferNotificationLogRepository
      *
      * @return void
      */
-    public function handle(ExternalNotificationServiceInterface $externalNotificationService): void
+    public function handle(
+        ExternalNotificationServiceInterface $externalNotificationService,
+        TransferNotificationLogRepositoryInterface $transferNotificationLogRepository
+    ): void
+    {
+        $this->externalNotificationService       = $externalNotificationService;
+        $this->transferNotificationLogRepository = $transferNotificationLogRepository;
+
+        $this->send();
+    }
+
+    /**
+     * @return void
+     */
+    private function send(): void
     {
         $payer = $this->transaction->payerWallet->user;
         $payee = $this->transaction->payeeWallet->user;
@@ -51,17 +78,47 @@ class TransferNotificationJob extends Job
             'value'           => FormatHelper::formatMoneyToBrl($this->transaction->value),
         ]);
 
-        $externalNotificationService->send($payee->email, $message);
+        $attemps = $this->attempts();
+
+        try {
+            $send = $this->externalNotificationService->send($payee->email, $message);
+
+            $this->transferNotificationLog(
+                $this->transaction->id,
+                $payee->email,
+                $message,
+                $attemps,
+                TransferNotificationLogStatusConstant::SUCCESS,
+            );
+        } catch (Exception $e) {
+            if ($attemps === 3) {
+                $this->transferNotificationLog(
+                    $this->transaction->id,
+                    $payee->email,
+                    $message,
+                    $attemps,
+                    TransferNotificationLogStatusConstant::FAILED,
+                );
+            }
+
+            $this->release();
+        }
     }
 
     /**
-     * @param Throwable $exception
+     * @param int $transactionId
+     * @param string $to
+     * @param string $message
+     * @param int $attemps
+     * @param string $status
      *
      * @return void
      */
-    public function failed(Throwable $exception): void
+    private function transferNotificationLog(int $transactionId, string $to, string $message, int $attemps, string $status): void
     {
-        // TODO
-        // print($this->attempts());
+        $this->transferNotificationLogRepository->updateOrCreate(
+            ['transaction_id' => $transactionId],
+            ['to' => $to, 'message' => $message, 'attemps' => $attemps, 'status' => $status]
+        );
     }
 }

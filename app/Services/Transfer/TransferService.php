@@ -166,7 +166,7 @@ class TransferService implements TransferServiceInterface
         $job = new TransferNotificationJob($transaction->get());
 
         if (getenv('APP_ENV') == EnvironmentConstant::LOCAL) {
-            $job->delay(Carbon::now()->addSeconds(5));
+            $job->delay(Carbon::now()->addSeconds(10));
         }
 
         dispatch($job);

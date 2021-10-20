@@ -3,9 +3,9 @@
 namespace App\Services\ExternalNotification;
 
 use Illuminate\Support\Facades\Http;
-use App\Exceptions\ExternalNotificationException;
-use App\Constants\ExternalNotificationConstant;
 use App\Services\ExternalNotification\Contracts\ExternalNotificationServiceInterface;
+use App\Constants\ExternalNotificationConstant;
+use App\Exceptions\ExternalNotificationException;
 
 class ExternalNotificationService implements ExternalNotificationServiceInterface
 {

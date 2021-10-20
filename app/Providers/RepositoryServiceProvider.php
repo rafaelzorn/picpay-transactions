@@ -13,6 +13,8 @@ use App\Repositories\Transaction\TransactionRepository;
 use App\Repositories\Transaction\Contracts\TransactionRepositoryInterface;
 use App\Repositories\TransactionLog\TransactionLogRepository;
 use App\Repositories\TransactionLog\Contracts\TransactionLogRepositoryInterface;
+use App\Repositories\TransferNotificationLog\TransferNotificationLogRepository;
+use App\Repositories\TransferNotificationLog\Contracts\TransferNotificationLogRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -26,5 +28,10 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(WalletRepositoryInterface::class, WalletRepository::class);
         $this->app->bind(TransactionRepositoryInterface::class, TransactionRepository::class);
         $this->app->bind(TransactionLogRepositoryInterface::class, TransactionLogRepository::class);
+        $this->app->bind(TransactionRepositoryInterface::class, TransactionRepository::class);
+        $this->app->bind(
+            TransferNotificationLogRepositoryInterface::class,
+            TransferNotificationLogRepository::class,
+        );
     }
 }
