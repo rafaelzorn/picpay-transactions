@@ -63,6 +63,8 @@ $app->configure('app');
 
 $app->configure('queue');
 
+$app->configure('services');
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware

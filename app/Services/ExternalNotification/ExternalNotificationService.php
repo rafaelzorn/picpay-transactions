@@ -17,7 +17,7 @@ class ExternalNotificationService implements ExternalNotificationServiceInterfac
      */
     public function send(string $to, string $message): bool
     {
-        $externalNotificationEndpoint = getenv('EXTERNAL_NOTIFICATION_ENDPOINT');
+        $externalNotificationEndpoint = config('services.notification.endpoint');
         $response                     = Http::get($externalNotificationEndpoint);
 
         if (

@@ -15,7 +15,7 @@ class ExternalAuthorizerService implements ExternalAuthorizerServiceInterface
      */
     public function isAuthorized(): bool
     {
-        $externalAuthorizerEndpoint = getenv('EXTERNAL_AUTHORIZER_ENDPOINT');
+        $externalAuthorizerEndpoint = config('services.authorizer.endpoint');
         $response                   = Http::get($externalAuthorizerEndpoint);
 
         if (
