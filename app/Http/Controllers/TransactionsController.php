@@ -11,7 +11,7 @@ use App\Services\Transfer\Contracts\TransferServiceInterface;
 class TransactionsController extends Controller
 {
     /**
-     * @var $transferService
+     * @var TransferServiceInterface
      */
     private $transferService;
 

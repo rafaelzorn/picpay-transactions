@@ -8,12 +8,12 @@ use App\Helpers\ValidationHelper;
 class DocumentRule implements Rule
 {
     /**
-     * @var $cpf
+     * @var string
      */
     private $cpf;
 
     /**
-     * @var $cnpj
+     * @var string
      */
     private $cnpj;
 

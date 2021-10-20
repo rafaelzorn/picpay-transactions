@@ -8,7 +8,7 @@ use App\Repositories\Wallet\Contracts\WalletRepositoryInterface;
 class UserObserver
 {
     /**
-     * @var $walletRepository
+     * @var WalletRepositoryInterface
      */
     private $walletRepository;
 

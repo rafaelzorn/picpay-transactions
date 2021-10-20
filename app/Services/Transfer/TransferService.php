@@ -22,27 +22,27 @@ use App\Jobs\TransferNotificationJob;
 class TransferService implements TransferServiceInterface
 {
     /**
-     * @var $transferValidateData
+     * @var TransferValidateData
      */
     private $transferValidateData;
 
     /**
-     * @var $userRepository
+     * @var UserRepositoryInterface
      */
     private $userRepository;
 
     /**
-     * @var $transaction
+     * @var Transaction
      */
     private $transaction;
 
     /**
-     * @var $externalAuthorizerService
+     * @var ExternalAuthorizerServiceInterface
      */
     private $externalAuthorizerService;
 
     /**
-     * @var $transactionLogRepository
+     * @var TransactionLogRepositoryInterface
      */
     private $transactionLogRepository;
 
@@ -60,7 +60,7 @@ class TransferService implements TransferServiceInterface
         UserRepositoryInterface $userRepository,
         Transaction $transaction,
         ExternalAuthorizerServiceInterface $externalAuthorizerService,
-        TransactionLogRepositoryInterface $transactionLogRepository,
+        TransactionLogRepositoryInterface $transactionLogRepository
     )
     {
         $this->transferValidateData      = $transferValidateData;

@@ -11,32 +11,32 @@ use App\Repositories\Wallet\Contracts\WalletRepositoryInterface;
 class Transaction
 {
     /**
-     * @var $payerWallet
+     * @var Wallet
      */
     private $payerWallet;
 
     /**
-     * @var $payeeWallet
+     * @var Wallet
      */
     private $payeeWallet;
 
     /**
-     * @var $value
+     * @var float
      */
     private $value;
 
     /**
-     * @var $transaction
+     * @var TransactionModel
      */
     private $transaction;
 
     /**
-     * @var $transactionRepository
+     * @var TransactionRepositoryInterface
      */
     private $transactionRepository;
 
     /**
-     * @var $walletRepository
+     * @var WalletRepositoryInterface
      */
     private $walletRepository;
 

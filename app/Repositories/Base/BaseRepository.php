@@ -8,7 +8,7 @@ use App\Repositories\Base\Contracts\BaseRepositoryInterface;
 abstract class BaseRepository implements BaseRepositoryInterface
 {
     /**
-     * @var $model
+     * @var Model
      */
     protected $model;
 
@@ -21,7 +21,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return Model
      */

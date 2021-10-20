@@ -22,17 +22,17 @@ class TransferNotificationJob extends Job
     public $backoff = 10;
 
     /**
-     * @var $transaction
+     * @var Transaction
      */
     private $transaction;
 
     /**
-     * @var $transferNotificationLogRepository
+     * @var TransferNotificationLogRepositoryInterface
      */
     private $transferNotificationLogRepository;
 
     /**
-     * @var $externalNotificationService
+     * @var ExternalNotificationServiceInterface
      */
     private $externalNotificationService;
 

@@ -11,7 +11,7 @@ use App\Repositories\User\Contracts\UserRepositoryInterface;
 class TransferValidateData
 {
     /**
-     * @var UserRepositoryInterface $userRepository
+     * @var UserRepositoryInterface
      */
     private $userRepository;
 
