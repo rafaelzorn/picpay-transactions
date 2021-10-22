@@ -91,15 +91,13 @@ class TransferNotificationJob extends Job
                 TransferNotificationLogStatusConstant::SUCCESS,
             );
         } catch (Exception $e) {
-            if ($attemps === 3) {
-                $this->transferNotificationLog(
-                    $this->transaction->id,
-                    $payee->email,
-                    $message,
-                    $attemps,
-                    TransferNotificationLogStatusConstant::FAILED,
-                );
-            }
+            $this->transferNotificationLog(
+                $this->transaction->id,
+                $payee->email,
+                $message,
+                $attemps,
+                TransferNotificationLogStatusConstant::FAILED,
+            );
 
             $this->release();
         }

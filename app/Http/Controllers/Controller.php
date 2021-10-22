@@ -8,11 +8,11 @@ use Illuminate\Http\JsonResponse;
 class Controller extends BaseController
 {
     /**
-     * @param mixed $data
+     * @param array $data
      *
      * @return JsonResponse
      */
-    public function responseAdapter(mixed $data): JsonResponse
+    public function responseAdapter(array $data): JsonResponse
     {
         $response         = [];
         $response['code'] = $data['code'];
