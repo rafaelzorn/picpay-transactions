@@ -9,6 +9,18 @@ use App\Models\Wallet;
 class Transaction extends Model
 {
     /**
+     * Operations
+     */
+    const OPERATION_TRANSFER = 'transfer';
+
+    /**
+     * Status
+     */
+    const STATUS_REQUESTED  = 'requested';
+    const STATUS_COMPLETED  = 'completed';
+    const STATUS_CHARGEBACK = 'chargeback';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -17,6 +29,7 @@ class Transaction extends Model
         'payer_wallet_id',
         'payee_wallet_id',
         'value',
+        'operation',
         'status',
     ];
 
@@ -42,6 +55,7 @@ class Transaction extends Model
         'payer_wallet_id' => 'integer',
         'payee_wallet_id' => 'integer',
         'value'           => 'decimal:2',
+        'operation'       => 'string',
         'status'          => 'string',
         'created_at'      => 'datetime:Y-m-d H:i:s',
         'updated_at'      => 'datetime:Y-m-d H:i:s',

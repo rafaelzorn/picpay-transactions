@@ -4,12 +4,13 @@ namespace App\Services\ExternalAuthorizer;
 
 use Illuminate\Support\Facades\Http;
 use App\Exceptions\ExternalAuthorizerException;
-use App\Constants\ExternalAuthorizerConstant;
 use App\Services\ExternalAuthorizer\Contracts\ExternalAuthorizerServiceInterface;
 use App\Constants\HttpStatusConstant;
 
 class ExternalAuthorizerService implements ExternalAuthorizerServiceInterface
 {
+    const AUTHORIZED = 'Autorizado';
+
     /**
      * @return bool
      */
@@ -22,7 +23,7 @@ class ExternalAuthorizerService implements ExternalAuthorizerServiceInterface
             $response->serverError() ||
             $response->failed() ||
             $response->clientError() ||
-            $response->json()['message'] !== ExternalAuthorizerConstant::AUTHORIZED
+            $response->json()['message'] !== self::AUTHORIZED
         ) {
             throw new ExternalAuthorizerException(
                 trans('messages.external_authenticator_error'),

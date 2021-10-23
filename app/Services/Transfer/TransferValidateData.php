@@ -5,7 +5,7 @@ namespace App\Services\Transfer;
 use Exception;
 use App\Exceptions\TransferValidateDataException;
 use App\Constants\HttpStatusConstant;
-use App\Constants\UserTypeConstant;
+use App\Models\User;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
 
 class TransferValidateData
@@ -104,7 +104,7 @@ class TransferValidateData
     {
         $payer = $this->userRepository->findByAttribute('document', $payerDocument);
 
-        if ($payer->type == UserTypeConstant::SHOPKEEPER) {
+        if ($payer->type == User::TYPE_SHOPKEEPER) {
             throw new TransferValidateDataException(
                 trans('messages.shopkeeper_cannot_transfer'),
                 HttpStatusConstant::UNPROCESSABLE_ENTITY,

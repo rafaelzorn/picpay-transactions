@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'requested' => 'Solicitada',
-    'completed' => 'Concluída',
-    'failed'    => 'Fracassada',
+    'requested'  => 'Solicitada',
+    'completed'  => 'Concluída',
+    'chargeback' => 'Estornada',
 ];

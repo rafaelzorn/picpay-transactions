@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTransferNotificationLogsTable extends Migration
+class CreateTransactionNotificationLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateTransferNotificationLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('transfer_notification_logs', function (Blueprint $table) {
+        Schema::create('transaction_notification_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('transaction_id');
             $table->string('to');
             $table->string('message');
             $table->integer('attemps');
             $table->enum('status', ['success', 'failed']);
+            $table->text('exception_message')->nullable();
+            $table->longText('exception_trace')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -35,6 +37,6 @@ class CreateTransferNotificationLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transfer_notification_logs');
+        Schema::dropIfExists('transaction_notification_logs');
     }
 }

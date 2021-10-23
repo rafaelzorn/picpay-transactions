@@ -2,7 +2,6 @@
 
 namespace App\Services\Transfer;
 
-use App\Constants\TransactionConstant;
 use App\Models\Transaction as TransactionModel;
 use App\Models\Wallet;
 use App\Repositories\Transaction\Contracts\TransactionRepositoryInterface;
@@ -24,6 +23,11 @@ class Transaction
      * @var float
      */
     private $value;
+
+    /**
+     * @var string
+     */
+    private $operation;
 
     /**
      * @var TransactionModel
@@ -91,6 +95,18 @@ class Transaction
     }
 
     /**
+     * @param string $operation
+     *
+     * @return self
+     */
+    public function setOperation(string $operation): self
+    {
+        $this->operation = $operation;
+
+        return $this;
+    }
+
+    /**
      * @return self
      */
     public function requested(): self
@@ -110,7 +126,7 @@ class Transaction
     public function completed(): self
     {
         $this->transactionRepository->update($this->transaction, [
-            'status' => TransactionConstant::STATUS_COMPLETED
+            'status' => TransactionModel::STATUS_COMPLETED
         ]);
 
         return $this;
@@ -143,10 +159,10 @@ class Transaction
     /**
      * @return self
      */
-    public function failed(): self
+    public function chargeback(): self
     {
         $this->transactionRepository->update($this->transaction, [
-            'status' => TransactionConstant::STATUS_FAILED
+            'status' => TransactionModel::STATUS_CHARGEBACK
         ]);
 
         return $this;

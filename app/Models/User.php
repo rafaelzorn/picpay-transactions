@@ -8,6 +8,9 @@ use App\Models\Wallet;
 
 class User extends Model
 {
+    const TYPE_SHOPKEEPER = 'shopkeeper';
+    const TYPE_USER       = 'user';
+
     /**
      * The attributes that are mass assignable.
      *

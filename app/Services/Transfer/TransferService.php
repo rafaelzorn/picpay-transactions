@@ -5,12 +5,14 @@ namespace App\Services\Transfer;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Transaction as TransactionModel;
+use App\Models\TransactionFailedLog;
 use App\Exceptions\TransferValidateDataException;
 use App\Exceptions\ExternalAuthorizerException;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
 use App\Services\Transfer\Contracts\TransferServiceInterface;
 use App\Services\ExternalAuthorizer\Contracts\ExternalAuthorizerServiceInterface;
-use App\Repositories\TransactionLog\Contracts\TransactionLogRepositoryInterface;
+use App\Repositories\TransactionFailedLog\Contracts\TransactionFailedLogRepositoryInterface;
 use App\Services\Transfer\TransferValidateData;
 use App\Constants\HttpStatusConstant;
 use App\Constants\EnvironmentConstant;
@@ -18,6 +20,7 @@ use App\Services\Transfer\Transaction;
 use App\Resources\TransferResource;
 use App\Helpers\FormatHelper;
 use App\Jobs\TransferNotificationJob;
+
 
 class TransferService implements TransferServiceInterface
 {
@@ -42,16 +45,16 @@ class TransferService implements TransferServiceInterface
     private $externalAuthorizerService;
 
     /**
-     * @var TransactionLogRepositoryInterface
+     * @var TransactionFailedLogRepositoryInterface
      */
-    private $transactionLogRepository;
+    private $transactionFailedLogRepository;
 
     /**
      * @param TransferValidateData $transferValidateData
      * @param UserRepositoryInterface $userRepository
      * @param Transaction $transaction
      * @param ExternalAuthorizerServiceInterface $externalAuthorizerService
-     * @param TransactionLogRepositoryInterface $transactionLogRepository
+     * @param TransactionFailedLogRepositoryInterface $transactionFailedLogRepository
      *
      * @return void
      */
@@ -60,14 +63,14 @@ class TransferService implements TransferServiceInterface
         UserRepositoryInterface $userRepository,
         Transaction $transaction,
         ExternalAuthorizerServiceInterface $externalAuthorizerService,
-        TransactionLogRepositoryInterface $transactionLogRepository
+        TransactionFailedLogRepositoryInterface $transactionFailedLogRepository
     )
     {
-        $this->transferValidateData      = $transferValidateData;
-        $this->userRepository            = $userRepository;
-        $this->transaction               = $transaction;
-        $this->externalAuthorizerService = $externalAuthorizerService;
-        $this->transactionLogRepository  = $transactionLogRepository;
+        $this->transferValidateData           = $transferValidateData;
+        $this->userRepository                 = $userRepository;
+        $this->transaction                    = $transaction;
+        $this->externalAuthorizerService      = $externalAuthorizerService;
+        $this->transactionFailedLogRepository = $transactionFailedLogRepository;
     }
 
     /**
@@ -87,10 +90,11 @@ class TransferService implements TransferServiceInterface
             $payee = $this->userRepository->findByAttribute('document', $data['payee_document']);
 
             $this->transaction
-                 ->setPayerWallet($payer->wallet)
-                 ->setPayeeWallet($payee->wallet)
-                 ->setValue($data['value'])
-                 ->requested();
+                ->setOperation(TransactionModel::OPERATION_TRANSFER)
+                ->setPayerWallet($payer->wallet)
+                ->setPayeeWallet($payee->wallet)
+                ->setValue($data['value'])
+                ->requested();
 
             DB::beginTransaction();
 
@@ -143,16 +147,17 @@ class TransferService implements TransferServiceInterface
         if (!is_null($transaction->get())) {
             $transactionId = $transaction->get()->id;
 
-            $transaction->failed();
+            $transaction->chargeback();
         }
 
-        $this->transactionLogRepository->create([
-            'transaction_id' => $transactionId,
-            'payer_document' => $data['payer_document'],
-            'payee_document' => $data['payee_document'],
-            'value'          => $data['value'],
-            'message'        => $e->getMessage(),
-            'trace'          => $e->getTraceAsString(),
+        $this->transactionFailedLogRepository->create([
+            'transaction_id'    => $transactionId,
+            'payer_document'    => $data['payer_document'],
+            'payee_document'    => $data['payee_document'],
+            'value'             => $data['value'],
+            'operation'         => TransactionFailedLog::OPERATION_TRANSFER,
+            'exception_message' => $e->getMessage(),
+            'exception_trace'   => $e->getTraceAsString(),
         ]);
     }
 

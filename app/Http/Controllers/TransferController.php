@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Requests\TransferRequest;
+use App\Requests\TransferHandleRequest;
 use App\Services\Transfer\Contracts\TransferServiceInterface;
 
-class TransactionsController extends Controller
+class TransferController extends Controller
 {
     /**
      * @var TransferServiceInterface
@@ -30,12 +30,12 @@ class TransactionsController extends Controller
      *
      * @return JsonResponse
      */
-    public function transfer(Request $request): JsonResponse
+    public function handle(Request $request): JsonResponse
     {
         $this->validate(
             $request,
-            TransferRequest::rules(),
-            TransferRequest::messages(),
+            TransferHandleRequest::rules(),
+            TransferHandleRequest::messages(),
         );
 
         $response = $this->transferService->handle($request->all());

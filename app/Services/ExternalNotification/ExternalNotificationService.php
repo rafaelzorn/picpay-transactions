@@ -4,11 +4,12 @@ namespace App\Services\ExternalNotification;
 
 use Illuminate\Support\Facades\Http;
 use App\Services\ExternalNotification\Contracts\ExternalNotificationServiceInterface;
-use App\Constants\ExternalNotificationConstant;
 use App\Exceptions\ExternalNotificationException;
 
 class ExternalNotificationService implements ExternalNotificationServiceInterface
 {
+    const SENT = 'Enviado';
+
     /**
      * @param string $to
      * @param string $message
@@ -24,7 +25,7 @@ class ExternalNotificationService implements ExternalNotificationServiceInterfac
             $response->serverError() ||
             $response->failed() ||
             $response->clientError() ||
-            $response->json()['message'] !== ExternalNotificationConstant::SENT
+            $response->json()['message'] !== self::SENT
         ) {
             throw new ExternalNotificationException(trans('messages.external_notification_error'));
         }

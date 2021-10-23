@@ -4,10 +4,10 @@ namespace App\Jobs;
 
 use Exception;
 use App\Models\Transaction;
-use App\Repositories\TransferNotificationLog\Contracts\TransferNotificationLogRepositoryInterface;
+use App\Models\TransactionNotificationLog;
+use App\Repositories\TransactionNotificationLog\Contracts\TransactionNotificationLogRepositoryInterface;
 use App\Services\ExternalNotification\Contracts\ExternalNotificationServiceInterface;
 use App\Helpers\FormatHelper;
-use App\Constants\TransferNotificationLogStatusConstant;
 
 class TransferNotificationJob extends Job
 {
@@ -27,9 +27,9 @@ class TransferNotificationJob extends Job
     private $transaction;
 
     /**
-     * @var TransferNotificationLogRepositoryInterface
+     * @var TransactionNotificationLogRepositoryInterface
      */
-    private $transferNotificationLogRepository;
+    private $transactionNotificationLogRepositoryInterface;
 
     /**
      * @var ExternalNotificationServiceInterface
@@ -48,17 +48,17 @@ class TransferNotificationJob extends Job
 
     /**
      * @param ExternalNotificationServiceInterface $externalNotificationService
-     * @param TransferNotificationLogRepositoryInterface $transferNotificationLogRepository
+     * @param TransactionNotificationLogRepositoryInterface $transactionNotificationLogRepositoryInterface
      *
      * @return void
      */
     public function handle(
         ExternalNotificationServiceInterface $externalNotificationService,
-        TransferNotificationLogRepositoryInterface $transferNotificationLogRepository
+        TransactionNotificationLogRepositoryInterface $transactionNotificationLogRepositoryInterface
     ): void
     {
-        $this->externalNotificationService       = $externalNotificationService;
-        $this->transferNotificationLogRepository = $transferNotificationLogRepository;
+        $this->externalNotificationService                   = $externalNotificationService;
+        $this->transactionNotificationLogRepositoryInterface = $transactionNotificationLogRepositoryInterface;
 
         $this->send();
     }
@@ -80,24 +80,25 @@ class TransferNotificationJob extends Job
 
         $attemps = $this->attempts();
 
+        $log = [
+            'to'      => $payee->email,
+            'message' => $message,
+            'attemps' => $attemps,
+        ];
+
         try {
             $send = $this->externalNotificationService->send($payee->email, $message);
 
-            $this->transferNotificationLog(
-                $this->transaction->id,
-                $payee->email,
-                $message,
-                $attemps,
-                TransferNotificationLogStatusConstant::SUCCESS,
-            );
+            $log['status'] = TransactionNotificationLog::STATUS_SUCCESS;
+
+            $this->transactionNotificationLog($this->transaction->id, $log);
         } catch (Exception $e) {
-            $this->transferNotificationLog(
-                $this->transaction->id,
-                $payee->email,
-                $message,
-                $attemps,
-                TransferNotificationLogStatusConstant::FAILED,
-            );
+
+            $log['status']            = TransactionNotificationLog::STATUS_FAILED;
+            $log['exception_message'] = $e->getMessage();
+            $log['exception_trace']   = $e->getTraceAsString();
+
+            $this->transactionNotificationLog($this->transaction->id, $log);
 
             $this->release();
         }
@@ -105,18 +106,12 @@ class TransferNotificationJob extends Job
 
     /**
      * @param int $transactionId
-     * @param string $to
-     * @param string $message
-     * @param int $attemps
-     * @param string $status
+     * @param array $log
      *
      * @return void
      */
-    private function transferNotificationLog(int $transactionId, string $to, string $message, int $attemps, string $status): void
+    private function transactionNotificationLog(int $transactionId, array $log): void
     {
-        $this->transferNotificationLogRepository->updateOrCreate(
-            ['transaction_id' => $transactionId],
-            ['to' => $to, 'message' => $message, 'attemps' => $attemps, 'status' => $status]
-        );
+        $this->transactionNotificationLogRepositoryInterface->updateOrCreate(['transaction_id' => $transactionId], $log);
     }
 }

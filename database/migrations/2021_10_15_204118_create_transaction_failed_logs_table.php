@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTransactionLogsTable extends Migration
+class CreateTransactionFailedLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,15 @@ class CreateTransactionLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('transaction_logs', function (Blueprint $table) {
+        Schema::create('transaction_failed_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('transaction_id')->nullable();
             $table->string('payer_document');
             $table->string('payee_document');
             $table->decimal('value', 10, 2);
-            $table->text('message');
-            $table->longText('trace');
+            $table->enum('operation', ['transfer']);
+            $table->text('exception_message');
+            $table->longText('exception_trace');
 
             $table->timestamps();
             $table->softDeletes();
@@ -36,6 +37,6 @@ class CreateTransactionLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transaction_logs');
+        Schema::dropIfExists('transaction_failed_logs');
     }
 }

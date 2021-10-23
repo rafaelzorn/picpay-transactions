@@ -11,10 +11,10 @@ use App\Repositories\Wallet\WalletRepository;
 use App\Repositories\Wallet\Contracts\WalletRepositoryInterface;
 use App\Repositories\Transaction\TransactionRepository;
 use App\Repositories\Transaction\Contracts\TransactionRepositoryInterface;
-use App\Repositories\TransactionLog\TransactionLogRepository;
-use App\Repositories\TransactionLog\Contracts\TransactionLogRepositoryInterface;
-use App\Repositories\TransferNotificationLog\TransferNotificationLogRepository;
-use App\Repositories\TransferNotificationLog\Contracts\TransferNotificationLogRepositoryInterface;
+use App\Repositories\TransactionFailedLog\TransactionFailedLogRepository;
+use App\Repositories\TransactionFailedLog\Contracts\TransactionFailedLogRepositoryInterface;
+use App\Repositories\TransactionNotificationLog\TransactionNotificationLogRepository;
+use App\Repositories\TransactionNotificationLog\Contracts\TransactionNotificationLogRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -27,11 +27,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(WalletRepositoryInterface::class, WalletRepository::class);
         $this->app->bind(TransactionRepositoryInterface::class, TransactionRepository::class);
-        $this->app->bind(TransactionLogRepositoryInterface::class, TransactionLogRepository::class);
+        $this->app->bind(TransactionFailedLogRepositoryInterface::class, TransactionFailedLogRepository::class);
         $this->app->bind(TransactionRepositoryInterface::class, TransactionRepository::class);
         $this->app->bind(
-            TransferNotificationLogRepositoryInterface::class,
-            TransferNotificationLogRepository::class,
+            TransactionNotificationLogRepositoryInterface::class,
+            TransactionNotificationLogRepository::class,
         );
     }
 }

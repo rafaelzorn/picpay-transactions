@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\User;
 
 class UserFactory extends Factory
 {
@@ -21,9 +21,6 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-        return [
-            'name' => $this->faker->name,
-            'email' => $this->faker->unique()->safeEmail,
-        ];
+        return [];
     }
 }

@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
-use App\Constants\UserTypeConstant;
 
 class UserSeeder extends Seeder
 {
@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
                 'document'  => '48267677062',
                 'email'     => 'rafael@gmail.com.br',
                 'password'  => Hash::make(123456),
-                'type'      => UserTypeConstant::USER,
+                'type'      => User::TYPE_USER,
             ]);
         }
 
@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
                 'document'  => '81347820000',
                 'email'     => 'bruna@gmail.com.br',
                 'password'  => Hash::make(654321),
-                'type'      => UserTypeConstant::USER,
+                'type'      => User::TYPE_USER,
             ]);
         }
 
@@ -66,7 +66,7 @@ class UserSeeder extends Seeder
                 'document'  => '70915585000155',
                 'email'     => 'lojista-contato@gmail.com.br',
                 'password'  => Hash::make(1234567),
-                'type'      => UserTypeConstant::SHOPKEEPER,
+                'type'      => User::TYPE_SHOPKEEPER,
             ]);
         }
     }

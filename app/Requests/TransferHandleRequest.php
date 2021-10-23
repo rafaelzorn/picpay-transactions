@@ -5,7 +5,7 @@ namespace App\Requests;
 use App\Rules\DocumentRule;
 use App\Constants\DocumentTypeConstant;
 
-class TransferRequest
+class TransferHandleRequest
 {
     /**
      * @return array

@@ -4,8 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TransactionLog extends Model
+class TransactionFailedLog extends Model
 {
+    /**
+     * Operations
+     */
+    const OPERATION_TRANSFER = 'transfer';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -16,8 +21,9 @@ class TransactionLog extends Model
         'payer_document',
         'payee_document',
         'value',
-        'message',
-        'trace',
+        'operation',
+        'exception_message',
+        'exception_trace',
     ];
 
     /**
@@ -42,6 +48,7 @@ class TransactionLog extends Model
         'payer_document'    => 'string',
         'payee_document'    => 'string',
         'value'             => 'decimal:2',
+        'operation'         => 'string',
         'exception_message' => 'string',
         'exception_trace'   => 'string',
         'created_at'        => 'datetime:Y-m-d H:i:s',
