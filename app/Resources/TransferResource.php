@@ -20,6 +20,7 @@ class TransferResource extends JsonResource
             'payer_document' => $transaction->payerWallet->user->document,
             'payee_document' => $transaction->payeeWallet->user->document,
             'value'          => $transaction->value,
+            'operation'      => trans('transaction-operation.' . $transaction->operation),
             'status'         => trans('transaction-status.' . $transaction->status),
             'created_at'     => FormatHelper::formatMysqlDateTime($transaction->created_at),
         ];

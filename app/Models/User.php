@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Wallet;
 
 class User extends Model
 {
+    use HasFactory;
+
     const TYPE_SHOPKEEPER = 'shopkeeper';
     const TYPE_USER       = 'user';
 

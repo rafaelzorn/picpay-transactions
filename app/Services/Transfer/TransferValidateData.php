@@ -3,10 +3,10 @@
 namespace App\Services\Transfer;
 
 use Exception;
-use App\Exceptions\TransferValidateDataException;
-use App\Constants\HttpStatusConstant;
 use App\Models\User;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
+use App\Exceptions\TransferValidateDataException;
+use App\Constants\HttpStatusConstant;
 
 class TransferValidateData
 {

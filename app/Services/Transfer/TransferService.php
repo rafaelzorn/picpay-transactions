@@ -7,42 +7,26 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Transaction as TransactionModel;
 use App\Models\TransactionFailedLog;
-use App\Exceptions\TransferValidateDataException;
-use App\Exceptions\ExternalAuthorizerException;
 use App\Repositories\User\Contracts\UserRepositoryInterface;
+use App\Repositories\TransactionFailedLog\Contracts\TransactionFailedLogRepositoryInterface;
 use App\Services\Transfer\Contracts\TransferServiceInterface;
 use App\Services\ExternalAuthorizer\Contracts\ExternalAuthorizerServiceInterface;
-use App\Repositories\TransactionFailedLog\Contracts\TransactionFailedLogRepositoryInterface;
+use App\Services\Transfer\Transaction;
 use App\Services\Transfer\TransferValidateData;
 use App\Constants\HttpStatusConstant;
 use App\Constants\EnvironmentConstant;
-use App\Services\Transfer\Transaction;
-use App\Resources\TransferResource;
-use App\Helpers\FormatHelper;
+use App\Exceptions\TransferValidateDataException;
+use App\Exceptions\ExternalAuthorizerException;
 use App\Jobs\TransferNotificationJob;
-
+use App\Helpers\FormatHelper;
+use App\Resources\TransferResource;
 
 class TransferService implements TransferServiceInterface
 {
     /**
-     * @var TransferValidateData
-     */
-    private $transferValidateData;
-
-    /**
      * @var UserRepositoryInterface
      */
     private $userRepository;
-
-    /**
-     * @var Transaction
-     */
-    private $transaction;
-
-    /**
-     * @var ExternalAuthorizerServiceInterface
-     */
-    private $externalAuthorizerService;
 
     /**
      * @var TransactionFailedLogRepositoryInterface
@@ -50,27 +34,42 @@ class TransferService implements TransferServiceInterface
     private $transactionFailedLogRepository;
 
     /**
-     * @param TransferValidateData $transferValidateData
+     * @var ExternalAuthorizerServiceInterface
+     */
+    private $externalAuthorizerService;
+
+    /**
+     * @var Transaction
+     */
+    private $transaction;
+
+    /**
+     * @var TransferValidateData
+     */
+    private $transferValidateData;
+
+    /**
      * @param UserRepositoryInterface $userRepository
-     * @param Transaction $transaction
-     * @param ExternalAuthorizerServiceInterface $externalAuthorizerService
      * @param TransactionFailedLogRepositoryInterface $transactionFailedLogRepository
+     * @param ExternalAuthorizerServiceInterface $externalAuthorizerService
+     * @param Transaction $transaction
+     * @param TransferValidateData $transferValidateData
      *
      * @return void
      */
     public function __construct(
-        TransferValidateData $transferValidateData,
         UserRepositoryInterface $userRepository,
-        Transaction $transaction,
+        TransactionFailedLogRepositoryInterface $transactionFailedLogRepository,
         ExternalAuthorizerServiceInterface $externalAuthorizerService,
-        TransactionFailedLogRepositoryInterface $transactionFailedLogRepository
+        Transaction $transaction,
+        TransferValidateData $transferValidateData
     )
     {
-        $this->transferValidateData           = $transferValidateData;
         $this->userRepository                 = $userRepository;
-        $this->transaction                    = $transaction;
-        $this->externalAuthorizerService      = $externalAuthorizerService;
         $this->transactionFailedLogRepository = $transactionFailedLogRepository;
+        $this->externalAuthorizerService      = $externalAuthorizerService;
+        $this->transaction                    = $transaction;
+        $this->transferValidateData           = $transferValidateData;
     }
 
     /**

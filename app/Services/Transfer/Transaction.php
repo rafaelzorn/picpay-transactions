@@ -10,6 +10,21 @@ use App\Repositories\Wallet\Contracts\WalletRepositoryInterface;
 class Transaction
 {
     /**
+     * @var TransactionModel
+     */
+    private $transaction;
+
+    /**
+     * @var TransactionRepositoryInterface
+     */
+    private $transactionRepository;
+
+    /**
+     * @var WalletRepositoryInterface
+     */
+    private $walletRepository;
+
+    /**
      * @var Wallet
      */
     private $payerWallet;
@@ -28,21 +43,6 @@ class Transaction
      * @var string
      */
     private $operation;
-
-    /**
-     * @var TransactionModel
-     */
-    private $transaction;
-
-    /**
-     * @var TransactionRepositoryInterface
-     */
-    private $transactionRepository;
-
-    /**
-     * @var WalletRepositoryInterface
-     */
-    private $walletRepository;
 
     /**
      * @param TransactionRepositoryInterface $transactionRepository
@@ -115,6 +115,7 @@ class Transaction
             'payer_wallet_id' => $this->payerWallet->id,
             'payee_wallet_id' => $this->payeeWallet->id,
             'value'           => $this->value,
+            'operation'       => $this->operation,
         ]);
 
         return $this;
