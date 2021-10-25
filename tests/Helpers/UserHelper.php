@@ -7,10 +7,11 @@ class UserHelper
 {
     /**
      * @param string $type
+     * @param float $balance
      *
      * @return User $user
      */
-    public static function createUserWithWallet(string $type, $balance): User
+    public static function createUserWithWallet(string $type, float $balance): User
     {
         $user = User::factory()->type($type)->create();
 

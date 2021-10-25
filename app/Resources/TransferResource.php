@@ -14,15 +14,13 @@ class TransferResource extends JsonResource
      */
     public function toArray($request): array
     {
-        $transaction = $this->get();
-
         return [
-            'payer_document' => $transaction->payerWallet->user->document,
-            'payee_document' => $transaction->payeeWallet->user->document,
-            'value'          => $transaction->value,
-            'operation'      => trans('transaction-operation.' . $transaction->operation),
-            'status'         => trans('transaction-status.' . $transaction->status),
-            'created_at'     => FormatHelper::formatMysqlDateTime($transaction->created_at),
+            'payer_document' => $this->payerWallet->user->document,
+            'payee_document' => $this->payeeWallet->user->document,
+            'value'          => $this->value,
+            'operation'      => trans('transaction-operation.' . $this->operation),
+            'status'         => trans('transaction-status.' . $this->status),
+            'created_at'     => FormatHelper::formatMysqlDateTime($this->created_at),
         ];
     }
 }

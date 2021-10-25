@@ -18,7 +18,6 @@ use App\Constants\EnvironmentConstant;
 use App\Exceptions\TransferValidateDataException;
 use App\Exceptions\ExternalAuthorizerException;
 use App\Jobs\TransferNotificationJob;
-use App\Helpers\FormatHelper;
 use App\Resources\TransferResource;
 
 class TransferService implements TransferServiceInterface
@@ -80,9 +79,6 @@ class TransferService implements TransferServiceInterface
     public function handle(array $data): array
     {
         try {
-            $data['payer_document'] = FormatHelper::onlyNumbers($data['payer_document']);
-            $data['payee_document'] = FormatHelper::onlyNumbers($data['payee_document']);
-
             $this->transferValidateData->validate($data);
 
             $payer = $this->userRepository->findByAttribute('document', $data['payer_document']);
@@ -108,7 +104,7 @@ class TransferService implements TransferServiceInterface
 
             $this->dispatch($this->transaction);
 
-            $data = new TransferResource($this->transaction);
+            $data = new TransferResource($this->transaction->get());
 
             return [
                 'code'    => HttpStatusConstant::OK,
