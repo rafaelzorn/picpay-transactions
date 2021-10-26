@@ -3,6 +3,7 @@
 namespace App\Requests;
 
 use App\Rules\DocumentRule;
+use App\Rules\ShopkeeperDoesNotTransferRule;
 use App\Constants\DocumentTypeConstant;
 
 class TransferHandleRequest
@@ -13,13 +14,20 @@ class TransferHandleRequest
     public static function rules(): array
     {
         return [
-            'payer_document' => ['required', 'numeric', new DocumentRule(DocumentTypeConstant::CPF)],
+            'payer_document' => [
+                'bail',
+                'required',
+                'numeric',
+                new ShopkeeperDoesNotTransferRule(),
+                new DocumentRule(DocumentTypeConstant::CPF),
+            ],
             'payee_document' => [
+                'bail',
                 'required',
                 'numeric',
                 new DocumentRule(DocumentTypeConstant::CPF, DocumentTypeConstant::CNPJ)
             ],
-            'value' => 'required|numeric|between:0.01,999.99',
+            'value' => 'bail|required|numeric|between:0.01,999.99',
         ];
     }
 

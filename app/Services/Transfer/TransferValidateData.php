@@ -35,7 +35,6 @@ class TransferValidateData
         $this->payerExists($data['payer_document']);
         $this->payeeExists($data['payee_document']);
         $this->transferIsNotForYourself($data['payer_document'], $data['payee_document']);
-        $this->isNotShopkeeper($data['payer_document']);
         $this->payerHasEnoughBalance($data['payer_document'], $data['value']);
     }
 
@@ -88,25 +87,6 @@ class TransferValidateData
         if ($payerDocument === $payeeDocument) {
             throw new TransferValidateDataException(
                 trans('messages.tranfer_for_yourself'),
-                HttpStatusConstant::UNPROCESSABLE_ENTITY,
-            );
-        }
-
-        return true;
-    }
-
-    /**
-     * @param string $payerDocument
-     *
-     * @return bool
-     */
-    private function isNotShopkeeper(string $payerDocument): ?bool
-    {
-        $payer = $this->userRepository->findByAttribute('document', $payerDocument);
-
-        if ($payer->type == User::TYPE_SHOPKEEPER) {
-            throw new TransferValidateDataException(
-                trans('messages.shopkeeper_cannot_transfer'),
                 HttpStatusConstant::UNPROCESSABLE_ENTITY,
             );
         }
