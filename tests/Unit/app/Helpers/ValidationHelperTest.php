@@ -11,17 +11,9 @@ class ValidationHelperTest extends TestCase
      */
     public function should_return_valid_cpf(): void
     {
-        $validDocuments = [
-            '831.865.860-46',
-            '74233744073',
-            '518.340.260-40',
-            '62613527048',
-            '200.889.220-49',
-        ];
+        $validDocument = $this->faker()->cpf(false);
 
-        foreach ($validDocuments as $validDocument) {
-            $this->assertTrue(ValidationHelper::isValidCpf($validDocument));
-        }
+        $this->assertTrue(ValidationHelper::isValidCpf($validDocument));
     }
 
     /**
@@ -31,7 +23,7 @@ class ValidationHelperTest extends TestCase
      */
     public function should_return_invalid_cpf(): void
     {
-        $validDocuments = [
+        $invalidDocuments = [
             '00000000000',
             '11111111111',
             '22222222222',
@@ -45,10 +37,11 @@ class ValidationHelperTest extends TestCase
             '608.248.510-68',
             '922.415.190-07',
             '045.063.090-34',
+            '045.023.010-30',
         ];
 
-        foreach ($validDocuments as $validDocument) {
-            $this->assertFalse(ValidationHelper::isValidCpf($validDocument));
+        foreach ($invalidDocuments as $invalidDocument) {
+            $this->assertFalse(ValidationHelper::isValidCpf($invalidDocument));
         }
     }
 
@@ -59,17 +52,9 @@ class ValidationHelperTest extends TestCase
      */
     public function should_return_valid_cnpj(): void
     {
-        $validDocuments = [
-            '53.703.060/0001-37',
-            '19003880000188',
-            '40.114.315/0001-84',
-            '45097544000151',
-            '70.447.289/0001-77',
-        ];
+        $validDocument = $this->faker()->cnpj(false);
 
-        foreach ($validDocuments as $validDocument) {
-            $this->assertTrue(ValidationHelper::isValidCnpj($validDocument));
-        }
+        $this->assertTrue(ValidationHelper::isValidCnpj($validDocument));
     }
 
     /**
@@ -79,7 +64,7 @@ class ValidationHelperTest extends TestCase
      */
     public function should_return_invalid_cpnj(): void
     {
-        $validDocuments = [
+        $invalidDocuments = [
             '00000000000000',
             '11111111111111',
             '22222222222222',
@@ -93,10 +78,11 @@ class ValidationHelperTest extends TestCase
             '74.831.692/0001-07',
             '21.174.646/0001-45',
             '33.671.691/0001-30',
+            '31.641.621/0001-20',
         ];
 
-        foreach ($validDocuments as $validDocument) {
-            $this->assertFalse(ValidationHelper::isValidCnpj($validDocument));
+        foreach ($invalidDocuments as $invalidDocument) {
+            $this->assertFalse(ValidationHelper::isValidCnpj($invalidDocument));
         }
     }
 }
