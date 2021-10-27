@@ -27,7 +27,7 @@ class TransferHandleRequest
                 'numeric',
                 new DocumentRule(DocumentTypeConstant::CPF, DocumentTypeConstant::CNPJ)
             ],
-            'value' => 'bail|required|numeric|between:0.01,999.99',
+            'value' => 'bail|required|numeric|between:0.01,1000.00',
         ];
     }
 

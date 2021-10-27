@@ -25,7 +25,7 @@ class ExternalNotificationService implements ExternalNotificationServiceInterfac
             $response->serverError() ||
             $response->failed() ||
             $response->clientError() ||
-            $response->json()['message'] !== self::SENT
+            $response->json()['message'] === self::SENT
         ) {
             throw new ExternalNotificationException(trans('messages.external_notification_error'));
         }

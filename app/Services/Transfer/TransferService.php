@@ -102,7 +102,7 @@ class TransferService implements TransferServiceInterface
 
             $this->transaction->completed();
 
-            $this->dispatch($this->transaction);
+            $this->dispatch($this->transaction->get());
 
             $data = new TransferResource($this->transaction->get());
 
@@ -139,7 +139,7 @@ class TransferService implements TransferServiceInterface
     {
         $transactionId = null;
 
-        if (!is_null($transaction->get())) {
+        if (!is_null($transaction)) {
             $transactionId = $transaction->get()->id;
 
             $transaction->chargeback();
@@ -157,13 +157,13 @@ class TransferService implements TransferServiceInterface
     }
 
     /**
-     * @param Transaction $transaction
+     * @param TransactionModel $transaction
      *
      * @return void
      */
-    private function dispatch(Transaction $transaction): void
+    private function dispatch(TransactionModel $transaction): void
     {
-        $job = new TransferNotificationJob($transaction->get());
+        $job = new TransferNotificationJob($transaction);
 
         if (config('app.app_env') == EnvironmentConstant::LOCAL) {
             $job->delay(Carbon::now()->addSeconds(10));
