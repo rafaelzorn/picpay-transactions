@@ -139,7 +139,7 @@ class TransferService implements TransferServiceInterface
     {
         $transactionId = null;
 
-        if (!is_null($transaction)) {
+        if (!is_null($transaction->get())) {
             $transactionId = $transaction->get()->id;
 
             $transaction->chargeback();

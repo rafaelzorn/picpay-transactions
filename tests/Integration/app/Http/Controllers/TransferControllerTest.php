@@ -246,7 +246,7 @@ class TransferControllerTest extends TestCase
         $data  = [
             'payer_document' => $this->faker()->cpf(false),
             'payee_document' => $this->faker()->cpf(false),
-            'value'          => 1000.00,
+            'value'          => 1001.00,
         ];
 
         // Act
@@ -264,7 +264,6 @@ class TransferControllerTest extends TestCase
      */
     public function should_return_payer_does_not_exists(): void
     {
-
         // Arrange
         $type  = User::TYPE_USER;
         $payer = User::factory()->type($type)->create();
