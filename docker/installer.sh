@@ -59,10 +59,10 @@ echo "=================================================> 62.5%"
 echo ""
 
 echo ""
-echo "6) Run the listener"
+echo "6) Running unit tests"
 echo ""
 
-docker exec picpay-transactions-api php artisan queue:listen
+docker exec picpay-transactions-api vendor/bin/phpunit tests/Unit/ --testdox
 
 echo ""
 echo "=================================================> 75%"
@@ -79,10 +79,10 @@ echo "=================================================> 87.5%"
 echo ""
 
 echo ""
-echo "8) Running unit tests"
+echo "8) Run the listener"
 echo ""
 
-docker exec picpay-transactions-api vendor/bin/phpunit tests/Unit/ --testdox
+docker exec picpay-transactions-api php artisan queue:listen
 
 echo ""
 echo "=================================================> 100%"
