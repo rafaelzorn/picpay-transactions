@@ -1,12 +1,11 @@
 <h1 align="center">PicPay Transactions</h1>
 
-<p>
-    <a href="#Instalação">Instalação</a>
-    <a href="#Endpoint">Endpoint</a>
-    <a href="#Estrutura da Aplicação">Estrutura da Aplicação</a>
-</p>
+* [Instalação](#Instalação)
+* [Endpoint](#Endpoint)
+* [Estrutura da Aplicação](#Estrutura da Aplicação)
+* [Tecnologias Utilizadas](#Tecnologias Utilizadas)
 
-## 🚀 Instalação
+## Instalação
 
 #### Pré-requisitos
 
@@ -34,7 +33,7 @@ Ao executar o script ``installer.sh`` ele irá executar os seguintes comandos:
 - docker exec picpay-transactions-api vendor/bin/phpunit tests/Integration/ --testdox
 - docker exec picpay-transactions-api php artisan queue:listen
 
-## 🌎 Endpoint
+## Endpoint
 
 ```
     http://localhost:8000/api/v1/transactions/transfer
@@ -58,6 +57,52 @@ Ao executar o script ``installer.sh`` ele irá executar os seguintes comandos:
     }
 ```
 
-## 📂 Estrutura da Aplicação
+## Estrutura da Aplicação
 
 <img alt="Skeleton" src="./documentation/skeleton.png" />
+
+##### Controllers
+- TransferController
+
+##### Jobs
+- TransferNotificationJob
+
+##### Models
+- Transaction
+- TransactionFailedLog
+- TransactionNotificationLog
+- User
+- Wallet
+
+##### Observers
+- UserObserver
+
+##### Repositories
+- BaseRepository
+- TransactionRepository
+- TransactionFailedLogRepository
+- TransactionNotificationLogRepository
+- UserRepository
+- WalletRepository
+
+##### Requests
+- TransferHandleRequest
+
+##### Resources
+- TransferResource
+
+##### Rules
+- DocumentRule
+- ShopkeeperDoesNotTransferRule
+
+##### Services
+- ExternalAuthorizerService
+- ExternalNotificationService
+- TransferService
+
+## Tecnologias Utilizadas
+
+- [Lumen 8.0](https://lumen.laravel.com/)
+- [Guzzle](https://github.com/guzzle/guzzle)
+- [RabbitMQ](https://www.rabbitmq.com/)
+- [RabbitMQ Queue driver for Laravel](https://github.com/vyuldashev/laravel-queue-rabbitmq)
