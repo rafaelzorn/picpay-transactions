@@ -2,8 +2,8 @@
 
 * [Instalação](#Instalação)
 * [Endpoint](#Endpoint)
-* [Estrutura da Aplicação](#Estrutura da Aplicação)
-* [Tecnologias Utilizadas](#Tecnologias Utilizadas)
+* [Estrutura da Aplicação](#estrutura-da-aplicação)
+* [Tecnologias Utilizadas](#tecnologias-utilizadas)
 
 ## Instalação
 
