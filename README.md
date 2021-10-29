@@ -4,6 +4,7 @@
 * [Endpoint](#Endpoint)
 * [Estrutura da Aplicação](#estrutura-da-aplicação)
 * [Tecnologias Utilizadas](#tecnologias-utilizadas)
+* [Modelo ER](#modelo-er)
 
 ## Instalação
 
@@ -99,6 +100,10 @@ Ao executar o script ``installer.sh`` ele irá executar os seguintes comandos:
 - ExternalAuthorizerService
 - ExternalNotificationService
 - TransferService
+
+## Endpoint
+
+<img alt="Skeleton" src="./documentation/modelo-er.png" />
 
 ## Tecnologias Utilizadas
 
