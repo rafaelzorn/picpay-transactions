@@ -5,6 +5,7 @@
 * [Estrutura da Aplicação](#estrutura-da-aplicação)
 * [Tecnologias Utilizadas](#tecnologias-utilizadas)
 * [Diagrama ER](#diagrama-er)
+* [Arquitetura](#arquitetura)
 
 ## Instalação
 
@@ -104,6 +105,10 @@ Ao executar o script ``installer.sh`` ele irá executar os seguintes comandos:
 ## Diagrama ER
 
 <img alt="Skeleton" src="./documentation/diagrama-er.png" />
+
+## Arquitetura
+
+<img alt="Skeleton" src="./documentation/arquitetura.png" />
 
 ## Tecnologias Utilizadas
 
