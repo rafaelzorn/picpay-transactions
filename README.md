@@ -4,7 +4,7 @@
 * [Endpoint](#Endpoint)
 * [Estrutura da Aplicação](#estrutura-da-aplicação)
 * [Tecnologias Utilizadas](#tecnologias-utilizadas)
-* [Modelo ER](#modelo-er)
+* [Diagrama ER](#diagrama-er)
 
 ## Instalação
 
@@ -101,9 +101,9 @@ Ao executar o script ``installer.sh`` ele irá executar os seguintes comandos:
 - ExternalNotificationService
 - TransferService
 
-## Endpoint
+## Diagrama ER
 
-<img alt="Skeleton" src="./documentation/modelo-er.png" />
+<img alt="Skeleton" src="./documentation/diagrama-er.png" />
 
 ## Tecnologias Utilizadas
 
