@@ -17,7 +17,7 @@ class CreateTransactionNotificationLogsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('transaction_id');
             $table->string('to');
-            $table->string('message');
+            $table->text('message');
             $table->integer('attemps');
             $table->enum('status', ['success', 'failed']);
             $table->text('exception_message')->nullable();
