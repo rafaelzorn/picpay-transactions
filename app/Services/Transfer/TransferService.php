@@ -95,12 +95,11 @@ class TransferService implements TransferServiceInterface
 
             $this->transaction->withdrawWalletPayer();
             $this->transaction->depositWalletPayee();
+            $this->transaction->completed();
 
             $this->externalAuthorizerService->isAuthorized();
 
             DB::commit();
-
-            $this->transaction->completed();
 
             $this->dispatch($this->transaction->get());
 
