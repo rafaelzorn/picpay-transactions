@@ -6,6 +6,7 @@
 * [Tecnologias Utilizadas](#tecnologias-utilizadas)
 * [Diagrama ER](#diagrama-er)
 * [Arquitetura](#arquitetura)
+* [Fluxograma](#fluxograma)
 
 ## Instalação
 
@@ -61,7 +62,7 @@ Ao executar o script ``installer.sh`` ele irá executar os seguintes comandos:
 
 ## Estrutura da Aplicação
 
-<img alt="Skeleton" src="./documentation/skeleton.png" />
+<img src="./documentation/skeleton.png" />
 
 ##### Controllers
 - TransferController
@@ -104,11 +105,15 @@ Ao executar o script ``installer.sh`` ele irá executar os seguintes comandos:
 
 ## Diagrama ER
 
-<img alt="Skeleton" src="./documentation/diagrama-er.png" />
+<img src="./documentation/diagrama-er.png" />
 
 ## Arquitetura
 
-<img alt="Skeleton" src="./documentation/arquitetura.png" />
+<img src="./documentation/arquitetura.png" />
+
+## Fluxograma
+
+<img src="./documentation/fluxograma.png" />
 
 ## Tecnologias Utilizadas
 
