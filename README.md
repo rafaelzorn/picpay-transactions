@@ -3,10 +3,10 @@
 * [Instalação](#Instalação)
 * [Endpoint](#Endpoint)
 * [Estrutura da Aplicação](#estrutura-da-aplicação)
-* [Tecnologias Utilizadas](#tecnologias-utilizadas)
 * [Diagrama ER](#diagrama-er)
 * [Arquitetura](#arquitetura)
 * [Fluxograma](#fluxograma)
+* [Tecnologias Utilizadas](#tecnologias-utilizadas)
 
 ## Instalação
 
