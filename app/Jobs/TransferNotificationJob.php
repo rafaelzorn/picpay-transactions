@@ -29,7 +29,7 @@ class TransferNotificationJob extends Job
     /**
      * @var TransactionNotificationLogRepositoryInterface
      */
-    private $transactionNotificationLogRepositoryInterface;
+    private $transactionNotificationLogRepository;
 
     /**
      * @var ExternalNotificationServiceInterface
@@ -48,17 +48,17 @@ class TransferNotificationJob extends Job
 
     /**
      * @param ExternalNotificationServiceInterface $externalNotificationService
-     * @param TransactionNotificationLogRepositoryInterface $transactionNotificationLogRepositoryInterface
+     * @param TransactionNotificationLogRepositoryInterface $transactionNotificationLogRepository
      *
      * @return void
      */
     public function handle(
         ExternalNotificationServiceInterface $externalNotificationService,
-        TransactionNotificationLogRepositoryInterface $transactionNotificationLogRepositoryInterface
+        TransactionNotificationLogRepositoryInterface $transactionNotificationLogRepository
     ): void
     {
-        $this->externalNotificationService                   = $externalNotificationService;
-        $this->transactionNotificationLogRepositoryInterface = $transactionNotificationLogRepositoryInterface;
+        $this->externalNotificationService          = $externalNotificationService;
+        $this->transactionNotificationLogRepository = $transactionNotificationLogRepository;
 
         $this->send();
     }
@@ -112,6 +112,6 @@ class TransferNotificationJob extends Job
      */
     private function transactionNotificationLog(int $transactionId, array $log): void
     {
-        $this->transactionNotificationLogRepositoryInterface->updateOrCreate(['transaction_id' => $transactionId], $log);
+        $this->transactionNotificationLogRepository->updateOrCreate(['transaction_id' => $transactionId], $log);
     }
 }
