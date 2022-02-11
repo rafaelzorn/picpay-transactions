@@ -92,27 +92,29 @@ class TransferNotificationJob extends Job
 
             $log['status'] = TransactionNotificationLog::STATUS_SUCCESS;
 
-            $this->transactionNotificationLog($this->transaction->id, $log);
+            $this->transactionNotificationLog($log);
         } catch (Exception $e) {
 
             $log['status']            = TransactionNotificationLog::STATUS_FAILED;
             $log['exception_message'] = $e->getMessage();
             $log['exception_trace']   = $e->getTraceAsString();
 
-            $this->transactionNotificationLog($this->transaction->id, $log);
+            $this->transactionNotificationLog($log);
 
             $this->release();
         }
     }
 
     /**
-     * @param int $transactionId
      * @param array $log
      *
      * @return void
      */
-    private function transactionNotificationLog(int $transactionId, array $log): void
+    private function transactionNotificationLog(array $log): void
     {
-        $this->transactionNotificationLogRepository->updateOrCreate(['transaction_id' => $transactionId], $log);
+        $this->transactionNotificationLogRepository->updateOrCreate([
+            'transaction_id' => $this->transaction->id],
+            $log
+        );
     }
 }

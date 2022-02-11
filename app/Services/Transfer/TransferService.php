@@ -101,7 +101,7 @@ class TransferService implements TransferServiceInterface
 
             DB::commit();
 
-            $this->dispatch($this->transaction->get());
+            $this->dispatchNotification();
 
             $data = new TransferResource($this->transaction->get());
 
@@ -113,7 +113,7 @@ class TransferService implements TransferServiceInterface
         } catch (Exception $e) {
             DB::rollBack();
 
-            $this->transactionFailed($data, $e, $this->transaction);
+            $this->transactionFailed($data, $e);
 
             switch (get_class($e)) {
                 case TransferValidateDataException::class || ExternalAuthorizerException::class:
@@ -130,12 +130,12 @@ class TransferService implements TransferServiceInterface
     /**
      * @param array $data
      * @param Exception $e
-     * @param Transaction $transaction
      *
      * @return void
      */
-    private function transactionFailed(array $data, Exception $e, Transaction $transaction): void
+    private function transactionFailed(array $data, Exception $e): void
     {
+        $transaction   = $this->transaction;
         $transactionId = null;
 
         if (!is_null($transaction->get())) {
@@ -156,13 +156,11 @@ class TransferService implements TransferServiceInterface
     }
 
     /**
-     * @param TransactionModel $transaction
-     *
      * @return void
      */
-    private function dispatch(TransactionModel $transaction): void
+    private function dispatchNotification(): void
     {
-        $job = new TransferNotificationJob($transaction);
+        $job = new TransferNotificationJob($this->transaction->get());
 
         if (config('app.app_env') == EnvironmentConstant::LOCAL) {
             $job->delay(Carbon::now()->addSeconds(10));
