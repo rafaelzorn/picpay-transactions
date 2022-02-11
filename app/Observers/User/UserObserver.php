@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Observers;
+namespace App\Observers\User;
 
 use App\Models\User;
 use App\Repositories\Wallet\Contracts\WalletRepositoryInterface;

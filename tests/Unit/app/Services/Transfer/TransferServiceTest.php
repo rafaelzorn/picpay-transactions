@@ -8,7 +8,7 @@ use App\Repositories\TransactionFailedLog\Contracts\TransactionFailedLogReposito
 use App\Services\ExternalAuthorizer\Contracts\ExternalAuthorizerServiceInterface;
 use App\Services\Transfer\Transaction;
 use App\Services\Transfer\TransferValidateData;
-use App\Exceptions\ExternalAuthorizerException;
+use App\Exceptions\ExternalAuthorizer\ExternalAuthorizerException;
 
 class TransferServiceTest extends TestCase
 {

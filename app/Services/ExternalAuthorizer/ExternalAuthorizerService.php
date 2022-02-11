@@ -3,7 +3,7 @@
 namespace App\Services\ExternalAuthorizer;
 
 use Illuminate\Support\Facades\Http;
-use App\Exceptions\ExternalAuthorizerException;
+use App\Exceptions\ExternalAuthorizer\ExternalAuthorizerException;
 use App\Services\ExternalAuthorizer\Contracts\ExternalAuthorizerServiceInterface;
 use App\Constants\HttpStatusConstant;
 

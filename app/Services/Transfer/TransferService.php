@@ -15,10 +15,10 @@ use App\Services\Transfer\Transaction;
 use App\Services\Transfer\TransferValidateData;
 use App\Constants\HttpStatusConstant;
 use App\Constants\EnvironmentConstant;
-use App\Exceptions\TransferValidateDataException;
-use App\Exceptions\ExternalAuthorizerException;
-use App\Jobs\TransferNotificationJob;
-use App\Resources\TransferResource;
+use App\Exceptions\Transfer\TransferValidateDataException;
+use App\Exceptions\ExternalAuthorizer\ExternalAuthorizerException;
+use App\Jobs\Transfer\TransferNotificationJob;
+use App\Resources\Transfer\TransferResource;
 
 class TransferService implements TransferServiceInterface
 {

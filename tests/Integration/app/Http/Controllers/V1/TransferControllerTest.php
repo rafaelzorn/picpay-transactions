@@ -4,7 +4,7 @@ use Laravel\Lumen\Testing\DatabaseMigrations;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Transaction;
-use App\Resources\TransferResource;
+use App\Resources\Transfer\TransferResource;
 use App\Constants\HttpStatusConstant;
 
 class TransferControllerTest extends TestCase

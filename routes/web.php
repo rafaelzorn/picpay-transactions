@@ -17,7 +17,7 @@ $router->get('/', function () use ($router) {
     return config('app.name');
 });
 
-$router->group(['prefix' => 'api/v1/transactions/'], function () use ($router) {
+$router->group(['prefix' => 'api/v1/transactions/', 'namespace' => 'V1'], function () use ($router) {
 
     // Transfer
     $router->post('transfer', 'TransferController@handle');

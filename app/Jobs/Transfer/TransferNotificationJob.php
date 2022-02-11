@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Transfer;
 
 use Exception;
 use App\Models\Transaction;
@@ -8,6 +8,7 @@ use App\Models\TransactionNotificationLog;
 use App\Repositories\TransactionNotificationLog\Contracts\TransactionNotificationLogRepositoryInterface;
 use App\Services\ExternalNotification\Contracts\ExternalNotificationServiceInterface;
 use App\Helpers\FormatHelper;
+use App\Jobs\Job;
 
 class TransferNotificationJob extends Job
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Requests;
+namespace App\Requests\Transfer;
 
 use App\Rules\DocumentRule;
 use App\Rules\ShopkeeperDoesNotTransferRule;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Resources;
+namespace App\Resources\Transfer;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Helpers\FormatHelper;
