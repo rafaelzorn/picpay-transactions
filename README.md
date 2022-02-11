@@ -1,7 +1,5 @@
 <h1 align="center">PicPay Transactions</h1>
 
-## Visão Geral
-
 Desafio técnico Backend - PHP retirado do [repositório oficial do PicPay ](https://github.com/PicPay/picpay-desafio-backend) para fins de estudo.
 
 ##
