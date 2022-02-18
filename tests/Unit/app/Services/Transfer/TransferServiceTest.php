@@ -14,11 +14,36 @@ class TransferServiceTest extends TestCase
 {
     use DatabaseMigrations;
 
+    /**
+     * @var UserRepositoryInterface
+     */
+    private $userRepository;
+
+    /**
+     * @var TransactionFailedLogRepositoryInterface
+     */
+    private $transactionFailedLogRepository;
+
+    /**
+     * @var Transaction
+     */
+    private $transaction;
+
+    /**
+     * @var TransferValidateData
+     */
+    private $transferValidateData;
+
     public function setUp(): void
     {
         parent::setUp();
 
         User::flushEventListeners();
+
+        $this->userRepository                 = $this->app->make(UserRepositoryInterface::class);
+        $this->transactionFailedLogRepository = $this->app->make(TransactionFailedLogRepositoryInterface::class);
+        $this->transaction                    = $this->app->make(Transaction::class);
+        $this->transferValidateData           = $this->app->make(TransferValidateData::class);
     }
 
     /**
@@ -28,11 +53,7 @@ class TransferServiceTest extends TestCase
      */
     public function should_rollback_transaction_when_external_authorization_exception_occurs(): void
     {
-        $userRepository                 = $this->app->make(UserRepositoryInterface::class);
-        $transactionFailedLogRepository = $this->app->make(TransactionFailedLogRepositoryInterface::class);
-        $externalAuthorizerService      = $this->createMock(ExternalAuthorizerServiceInterface::class);
-        $transaction                    = $this->app->make(Transaction::class);
-        $transferValidateData           = $this->app->make(TransferValidateData::class);
+        $externalAuthorizerService = $this->createMock(ExternalAuthorizerServiceInterface::class);
 
         $payer = UserHelper::createUserWithWallet(User::TYPE_USER, $this->faker()->randomFloat(2, 600, 900));
         $payee = UserHelper::createUserWithWallet(User::TYPE_USER, $this->faker()->randomFloat(2, 200, 500));
@@ -45,11 +66,11 @@ class TransferServiceTest extends TestCase
                                   ->will($this->throwException(new ExternalAuthorizerException));
 
         $transferService = new TransferService(
-            $userRepository,
-            $transactionFailedLogRepository,
+            $this->userRepository,
+            $this->transactionFailedLogRepository,
             $externalAuthorizerService,
-            $transaction,
-            $transferValidateData,
+            $this->transaction,
+            $this->transferValidateData,
         );
 
         $data = [
