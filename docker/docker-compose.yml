@@ -1,13 +1,13 @@
 version: "3.8"
 services:
   environment:
+    build: .
+    container_name: picpay_transactions_application
+    volumes:
+      - ../:/var/www/html/
     environment:
       RABBITMQ_SERVER: rabbitmq
       DB_HOST: mysql
-    build: .
-    container_name: picpay-transactions-api
-    volumes:
-      - ../:/var/www/html/
     ports:
       - "8000:8000"
     command: php -S 0.0.0.0:8000 -t public/
@@ -19,13 +19,13 @@ services:
       - mysql
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    container_name: picpay_transactions_rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
   mysql:
     image: mysql:5.7
-    container_name: picpay-transactions-db
+    container_name: picpay_transactions_mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports:

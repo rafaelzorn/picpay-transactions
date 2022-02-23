@@ -32,13 +32,13 @@ $ ./installer.sh
 Ao executar o script ``installer.sh`` ele irá executar os seguintes comandos:
 
 - docker-compose up -d
-- docker exec picpay-transactions-api cp .env.example .env
-- docker exec picpay-transactions-api composer install --ignore-platform-req=php
-- docker exec picpay-transactions-api php artisan migrate
-- docker exec picpay-transactions-api php artisan db:seed
-- docker exec picpay-transactions-api vendor/bin/phpunit tests/Unit/ --testdox
-- docker exec picpay-transactions-api vendor/bin/phpunit tests/Integration/ --testdox
-- docker exec picpay-transactions-api php artisan queue:listen
+- docker exec picpay_transactions_application cp .env.example .env
+- docker exec picpay_transactions_application composer install --ignore-platform-req=php
+- docker exec picpay_transactions_application php artisan migrate
+- docker exec picpay_transactions_application php artisan db:seed
+- docker exec picpay_transactions_application vendor/bin/phpunit tests/Unit/ --testdox
+- docker exec picpay_transactions_application vendor/bin/phpunit tests/Integration/ --testdox
+- docker exec picpay_transactions_application php artisan queue:listen
 
 ## Endpoint
 
