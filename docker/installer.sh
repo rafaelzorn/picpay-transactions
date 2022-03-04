@@ -12,7 +12,7 @@ echo ""
 echo "1) Up the containers"
 echo ""
 
-docker-compose -p PICPAY up -d
+docker-compose -p PICPAY_TRANSACTIONS up -d
 
 echo ""
 echo "=================================================> 12.5%"

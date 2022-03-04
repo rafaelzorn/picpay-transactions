@@ -31,7 +31,7 @@ $ ./installer.sh
 
 Ao executar o script ``installer.sh`` ele irá executar os seguintes comandos:
 
-- docker-compose -p PICPAY up -d
+- docker-compose -p PICPAY_TRANSACTIONS up -d
 - docker exec picpay_transactions_application cp .env.example .env
 - docker exec picpay_transactions_application composer install --ignore-platform-req=php
 - docker exec picpay_transactions_application php artisan migrate
