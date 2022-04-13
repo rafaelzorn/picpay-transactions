@@ -18,7 +18,7 @@ use App\Constants\EnvironmentConstant;
 use App\Exceptions\Transfer\TransferValidateDataException;
 use App\Exceptions\ExternalAuthorizer\ExternalAuthorizerException;
 use App\Jobs\Transfer\TransferNotificationJob;
-use App\Resources\Transfer\TransferResource;
+use App\Http\Resources\Transfer\TransferResource;
 
 class TransferService implements TransferServiceInterface
 {

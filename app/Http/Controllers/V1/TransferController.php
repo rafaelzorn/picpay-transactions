@@ -5,7 +5,7 @@ namespace App\Http\Controllers\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Requests\Transfer\TransferHandleRequest;
+use App\Http\Requests\Transfer\TransferHandleRequest;
 use App\Services\Transfer\Contracts\TransferServiceInterface;
 
 class TransferController extends Controller
