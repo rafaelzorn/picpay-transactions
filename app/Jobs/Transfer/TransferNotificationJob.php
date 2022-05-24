@@ -88,7 +88,7 @@ class TransferNotificationJob extends Job
         ];
 
         try {
-            $send = $this->externalNotificationService->send($payee->email, $message);
+            $this->externalNotificationService->send($payee->email, $message);
 
             $log['status'] = TransactionNotificationLog::STATUS_SUCCESS;
 
